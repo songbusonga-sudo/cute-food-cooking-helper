@@ -3,5 +3,5 @@ builder = "RAILPACK"
 
 [deploy]
 startCommand = "gunicorn backend.app:app --bind 0.0.0.0:$PORT"
-healthcheckPath = "/api/health"
+healthcheckPath = "/api/ping"
 healthcheckTimeout = 120

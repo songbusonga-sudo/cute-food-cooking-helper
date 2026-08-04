@@ -532,6 +532,11 @@ def create_app():
         connection.close()
         return jsonify({"status": "ok", "database": settings()["database"]})
 
+    @app.route("/api/ping")
+    def ping():
+        """Lightweight platform liveness check that does not require MySQL to be ready yet."""
+        return jsonify({"status": "ok"})
+
     @app.route("/admin")
     def admin_page():
         return render_template("admin.html")
