@@ -45,12 +45,15 @@ def read_env_file():
 def settings():
     env = read_env_file()
     get = lambda key, default: os.getenv(key, env.get(key, default))
+    # Railway's MySQL template exports names such as MYSQLHOST; keep the
+    # underscore names for local development while accepting those references.
+    get_mysql = lambda standard, railway, default: get(standard, get(railway, default))
     return {
-        "host": get("MYSQL_HOST", "127.0.0.1"),
-        "port": int(get("MYSQL_PORT", "3306")),
-        "user": get("MYSQL_USER", "food_app"),
-        "password": get("MYSQL_PASSWORD", ""),
-        "database": get("MYSQL_DATABASE", "cute_food"),
+        "host": get_mysql("MYSQL_HOST", "MYSQLHOST", "127.0.0.1"),
+        "port": int(get_mysql("MYSQL_PORT", "MYSQLPORT", "3306")),
+        "user": get_mysql("MYSQL_USER", "MYSQLUSER", "food_app"),
+        "password": get_mysql("MYSQL_PASSWORD", "MYSQLPASSWORD", ""),
+        "database": get_mysql("MYSQL_DATABASE", "MYSQLDATABASE", "cute_food"),
         "flask_host": get("FLASK_HOST", "127.0.0.1"),
         "flask_port": int(os.getenv("PORT", get("FLASK_PORT", "3008"))),
         "frontend_origin": get("FRONTEND_ORIGIN", "http://localhost:5241").rstrip("/"),
