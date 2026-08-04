@@ -1,0 +1,9 @@
+{
+  "name": "cute-food-cooking-helper",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "python -m http.server 5241 --bind localhost",
+    "api": "python -m backend.app"
+  }
+}
