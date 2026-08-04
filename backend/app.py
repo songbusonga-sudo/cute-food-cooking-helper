@@ -52,7 +52,9 @@ def settings():
         "password": get("MYSQL_PASSWORD", ""),
         "database": get("MYSQL_DATABASE", "cute_food"),
         "flask_host": get("FLASK_HOST", "127.0.0.1"),
-        "flask_port": int(get("FLASK_PORT", "3008")),
+        "flask_port": int(os.getenv("PORT", get("FLASK_PORT", "3008"))),
+        "frontend_origin": get("FRONTEND_ORIGIN", "http://localhost:5241").rstrip("/"),
+        "cookie_secure": get("COOKIE_SECURE", "false").lower() == "true",
         "secret_key": get("FLASK_SECRET_KEY", "change-this-local-secret"),
         "admin_username": get("ADMIN_USERNAME", "admin"),
         "admin_password": get("ADMIN_PASSWORD", "Admin_2026!"),
@@ -504,11 +506,17 @@ def save_recipe(connection, payload, is_new):
 def create_app():
     app = Flask(__name__)
     app.config["JSON_AS_ASCII"] = False
-    app.secret_key = settings()["secret_key"]
+    config = settings()
+    app.secret_key = config["secret_key"]
+    app.config["SESSION_COOKIE_SAMESITE"] = "None" if config["cookie_secure"] else "Lax"
+    app.config["SESSION_COOKIE_SECURE"] = config["cookie_secure"]
 
     @app.after_request
     def allow_frontend(response):
-        response.headers["Access-Control-Allow-Origin"] = "http://localhost:5241"
+        origin = request.headers.get("Origin", "").rstrip("/")
+        allowed_origins = {"http://localhost:5241", config["frontend_origin"]}
+        if origin in allowed_origins:
+            response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, X-User-Key"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, PATCH, PUT, DELETE, OPTIONS"
         response.headers["Access-Control-Allow-Credentials"] = "true"
