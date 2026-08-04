@@ -41,6 +41,13 @@ def catalogue_export_data(connection):
         links = cursor.fetchall()
         cursor.execute(
             """
+            SELECT recipe_id, name, icon, position
+            FROM recipe_seasonings ORDER BY recipe_id, position
+            """
+        )
+        seasonings = cursor.fetchall()
+        cursor.execute(
+            """
             SELECT recipe_id, step_number, instruction
             FROM recipe_steps ORDER BY recipe_id, step_number
             """
@@ -48,7 +55,7 @@ def catalogue_export_data(connection):
         steps = cursor.fetchall()
         cursor.execute("SELECT name FROM ingredient_categories ORDER BY name")
         categories = [row["name"] for row in cursor.fetchall()]
-        return ingredients, recipes, links, steps, categories
+        return ingredients, recipes, links, seasonings, steps, categories
     finally:
         cursor.close()
 
@@ -71,13 +78,14 @@ def style_data(sheet, start_row, end_row):
 
 
 def build_catalogue_export(connection):
-    ingredients, recipes, links, steps, categories = catalogue_export_data(connection)
+    ingredients, recipes, links, seasonings, steps, categories = catalogue_export_data(connection)
     workbook = Workbook()
     guide = workbook.active
     guide.title = "使用说明"
     ingredient_sheet = workbook.create_sheet("食材")
     recipe_sheet = workbook.create_sheet("菜谱")
     link_sheet = workbook.create_sheet("菜谱食材")
+    seasoning_sheet = workbook.create_sheet("菜谱调味料")
     step_sheet = workbook.create_sheet("步骤")
     dictionary_sheet = workbook.create_sheet("字典")
 
@@ -89,9 +97,10 @@ def build_catalogue_export(connection):
     guide["A1"].alignment = Alignment(horizontal="center", vertical="center")
     guide.row_dimensions[1].height = 28
     guide_rows = [
-        ("导出内容", "此文件由管理后台实时生成，包含当前食材、菜谱、食材关联、烹饪步骤和分类。"),
+        ("导出内容", "此文件由管理后台实时生成，包含当前食材、菜谱、食材关联、调味料、烹饪步骤和分类。"),
         ("再次导入", "请不要修改工作表名称和第一行表头；保存为 .xlsx 后可从“菜谱管理 - 导入 Excel”重新导入。"),
         ("菜谱图标", "无需填写。导入时后端会按“菜谱食材”中的顺序自动组合食材图标。"),
+        ("调味料", "“菜谱调味料”记录整道菜需要用到的调味料与图标，前端会单独展示。"),
         ("分类", "“食材”里的分类必须已在管理后台“食材管理 - 分类管理”中创建。"),
         ("标签格式", "多个标签使用英文竖线 | 分隔，例如：快手|家常|清爽。"),
     ]
@@ -104,7 +113,7 @@ def build_catalogue_export(connection):
     guide.column_dimensions["A"].width = 18
     guide.column_dimensions["B"].width = 78
 
-    for sheet in (ingredient_sheet, recipe_sheet, link_sheet, step_sheet, dictionary_sheet):
+    for sheet in (ingredient_sheet, recipe_sheet, link_sheet, seasoning_sheet, step_sheet, dictionary_sheet):
         sheet.sheet_view.showGridLines = False
 
     ingredient_sheet.append(["食材ID*", "食材名称*", "分类*", "图标*"])
@@ -139,6 +148,14 @@ def build_catalogue_export(connection):
     style_data(link_sheet, 2, len(links) + 1)
     for column, width in {"A": 24, "B": 24, "C": 12}.items():
         link_sheet.column_dimensions[column].width = width
+
+    seasoning_sheet.append(["菜谱ID*", "调味料名称*", "图标*", "顺序*"])
+    for seasoning in seasonings:
+        seasoning_sheet.append([seasoning["recipe_id"], seasoning["name"], seasoning["icon"], seasoning["position"]])
+    style_header(seasoning_sheet)
+    style_data(seasoning_sheet, 2, len(seasonings) + 1)
+    for column, width in {"A": 24, "B": 20, "C": 12, "D": 12}.items():
+        seasoning_sheet.column_dimensions[column].width = width
 
     step_sheet.append(["菜谱ID*", "步骤序号*", "做法*"])
     for step in steps:

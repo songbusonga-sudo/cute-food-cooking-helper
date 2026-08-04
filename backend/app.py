@@ -28,6 +28,16 @@ USER_ACCOUNT_PATTERN = re.compile(r"[A-Za-z0-9_-]{3,32}")
 IMPORT_PREVIEW_TTL_SECONDS = 15 * 60
 IMPORT_PREVIEWS = {}
 DEFAULT_INGREDIENT_CATEGORIES = ("蔬菜", "肉类", "蛋奶", "豆制品", "菌菇", "水产", "主食", "调味料", "坚果", "其他")
+SEASONING_CATEGORY = "调味料"
+DEFAULT_SEASONINGS = (
+    {"name": "食用油", "icon": "🫗"},
+    {"name": "盐", "icon": "🧂"},
+    {"name": "生抽", "icon": "🍶"},
+)
+MEAT_SEASONING_IDS = {
+    "beef", "chicken", "pork", "pork-belly", "pork-rib", "minced-pork",
+    "duck", "sausage", "shrimp", "fish", "clam", "squid",
+}
 
 
 def read_env_file():
@@ -98,6 +108,7 @@ def log_admin_action(connection, action, target_type, target_id=None, details=No
 
 def create_catalogue_backup(connection, backup_type, label, admin_id=None):
     """Persist a downloadable catalogue snapshot before a risky admin action."""
+    ensure_recipe_seasonings_table(connection)
     BACKUPS_DIR.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
     file_name = f"catalogue-{backup_type}-{timestamp}.xlsx"
@@ -141,6 +152,7 @@ def backup_file_path(record):
 
 
 def restore_catalogue_backup(connection, path):
+    ensure_recipe_seasonings_table(connection)
     file_storage = FileStorage(stream=io.BytesIO(path.read_bytes()), filename=path.name)
     data, upload_errors = read_upload(file_storage)
     if data is None:
@@ -180,6 +192,7 @@ def run_schema_and_seed():
             cursor.execute(statement)
     connection.commit()
     ensure_user_auth_columns(connection)
+    ensure_recipe_seasonings_table(connection)
     cursor.close()
     connection.close()
     seed_catalogue()
@@ -211,6 +224,74 @@ def ensure_user_auth_columns(connection):
     cursor.close()
 
 
+def ensure_recipe_seasonings_table(connection):
+    cursor = connection.cursor()
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS recipe_seasonings (
+          id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+          recipe_id VARCHAR(60) NOT NULL,
+          name VARCHAR(40) NOT NULL,
+          icon VARCHAR(16) NOT NULL,
+          position TINYINT UNSIGNED NOT NULL,
+          UNIQUE KEY uq_recipe_seasoning_position (recipe_id, position),
+          UNIQUE KEY uq_recipe_seasoning_name (recipe_id, name),
+          CONSTRAINT fk_recipe_seasonings_recipe FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+        """
+    )
+    connection.commit()
+    cursor.close()
+
+
+def default_recipe_seasonings(recipe):
+    ingredient_ids = set(recipe.get("ingredients") or recipe.get("ingredient_ids") or [])
+    name = recipe.get("name", "")
+    tags = recipe.get("tags", [])
+    seasonings = [dict(item) for item in DEFAULT_SEASONINGS]
+    if ingredient_ids & MEAT_SEASONING_IDS:
+        seasonings.append({"name": "料酒", "icon": "🍶"})
+    if "tomato" in ingredient_ids or "番茄" in name:
+        seasonings.append({"name": "白糖", "icon": "🍬"})
+    if "酸" in name or any("酸" in str(tag) for tag in tags):
+        seasonings.append({"name": "醋", "icon": "🍶"})
+    if "辣" in name or any("辣" in str(tag) for tag in tags):
+        seasonings.append({"name": "辣椒", "icon": "🌶️"})
+
+    unique = []
+    seen = set()
+    for item in seasonings:
+        if item["name"] not in seen:
+            unique.append(item)
+            seen.add(item["name"])
+    return unique
+
+
+def normalize_recipe_seasonings(value, fallback_recipe=None):
+    raw_items = value
+    if raw_items is None and fallback_recipe is not None:
+        raw_items = default_recipe_seasonings(fallback_recipe)
+    if not isinstance(raw_items, list) or not raw_items:
+        return [], "至少填写一种整道菜需要用到的调味料"
+
+    seasonings = []
+    seen = set()
+    for item in raw_items:
+        if not isinstance(item, dict):
+            return [], "调味料格式不正确"
+        name = str(item.get("name", "")).strip()
+        icon = str(item.get("icon", "")).strip()
+        if not name or not icon:
+            return [], "调味料名称和图标不能为空"
+        if len(name) > 40 or len(icon) > 16:
+            return [], "调味料名称最长 40 字符，图标最长 16 字符"
+        if name in seen:
+            return [], "同一道菜不能重复填写同一种调味料"
+        seen.add(name)
+        seasonings.append({"name": name, "icon": icon})
+    return seasonings, None
+
+
 def ensure_initial_admin():
     config = settings()
     connection = connect()
@@ -237,6 +318,7 @@ def ensure_initial_admin():
 
 def seed_catalogue():
     connection = connect()
+    ensure_recipe_seasonings_table(connection)
     cursor = connection.cursor()
     for ingredient in INGREDIENTS:
         cursor.execute(
@@ -263,11 +345,18 @@ def seed_catalogue():
             (recipe["id"], recipe["name"], recipe["art"], recipe["description"], recipe["minutes"], recipe["difficulty"], recipe["calories"], json.dumps(recipe["tags"], ensure_ascii=False)),
         )
         cursor.execute("DELETE FROM recipe_ingredients WHERE recipe_id=%s", (recipe["id"],))
+        cursor.execute("DELETE FROM recipe_seasonings WHERE recipe_id=%s", (recipe["id"],))
         cursor.execute("DELETE FROM recipe_steps WHERE recipe_id=%s", (recipe["id"],))
         for position, ingredient_id in enumerate(recipe["ingredients"], start=1):
             cursor.execute(
                 "INSERT INTO recipe_ingredients (recipe_id, ingredient_id, position) VALUES (%s, %s, %s)",
                 (recipe["id"], ingredient_id, position),
+            )
+        seasonings = recipe.get("seasonings") or default_recipe_seasonings(recipe)
+        for position, seasoning in enumerate(seasonings, start=1):
+            cursor.execute(
+                "INSERT INTO recipe_seasonings (recipe_id, name, icon, position) VALUES (%s, %s, %s, %s)",
+                (recipe["id"], seasoning["name"], seasoning["icon"], position),
             )
         for step_number, instruction in enumerate(recipe["steps"], start=1):
             cursor.execute(
@@ -348,6 +437,7 @@ def decode_json(value, fallback):
 
 
 def fetch_recipes(connection):
+    ensure_recipe_seasonings_table(connection)
     cursor = connection.cursor(dictionary=True)
     cursor.execute("SELECT * FROM recipes ORDER BY minutes, name")
     rows = cursor.fetchall()
@@ -357,11 +447,26 @@ def fetch_recipes(connection):
             """
             SELECT i.id, i.name, i.category, i.icon
             FROM recipe_ingredients ri JOIN ingredients i ON i.id=ri.ingredient_id
-            WHERE ri.recipe_id=%s ORDER BY ri.position
+            WHERE ri.recipe_id=%s AND i.category<>%s ORDER BY ri.position
+            """,
+            (row["id"], SEASONING_CATEGORY),
+        )
+        ingredients = cursor.fetchall()
+        cursor.execute(
+            """
+            SELECT name, icon
+            FROM recipe_seasonings
+            WHERE recipe_id=%s ORDER BY position
             """,
             (row["id"],),
         )
-        ingredients = cursor.fetchall()
+        seasonings = cursor.fetchall()
+        if not seasonings:
+            seasonings = default_recipe_seasonings({
+                "name": row["name"],
+                "ingredient_ids": [item["id"] for item in ingredients],
+                "tags": decode_json(row["tags"], []),
+            })
         cursor.execute("SELECT instruction FROM recipe_steps WHERE recipe_id=%s ORDER BY step_number", (row["id"],))
         steps = [item["instruction"] for item in cursor.fetchall()]
         recipes.append({
@@ -369,7 +474,7 @@ def fetch_recipes(connection):
             "minutes": row["minutes"], "time": f"{row['minutes']} 分钟", "diff": row["difficulty"],
             "cal": f"{row['calories']} kcal", "calories": row["calories"], "tags": decode_json(row["tags"], []),
             "ingredients": ingredients, "ingredient_ids": [item["id"] for item in ingredients],
-            "ingredient_names": [item["name"] for item in ingredients], "steps": steps,
+            "ingredient_names": [item["name"] for item in ingredients], "seasonings": seasonings, "steps": steps,
         })
     cursor.close()
     return recipes
@@ -451,11 +556,17 @@ def save_recipe(connection, payload, is_new):
     ingredient_ids = payload.get("ingredient_ids", [])
     steps = payload.get("steps", [])
     tags = payload.get("tags", [])
+    seasonings, seasoning_error = normalize_recipe_seasonings(
+        payload.get("seasonings"),
+        {"name": payload.get("name", ""), "ingredients": ingredient_ids, "tags": tags},
+    )
     required = ("name", "art", "desc", "minutes", "diff", "calories")
     if not valid_catalogue_id(recipe_id) or any(not payload.get(key) for key in required):
         return "请填写菜谱编号、名称、插画、简介、时长、难度和热量"
     if not isinstance(ingredient_ids, list) or not ingredient_ids or len(ingredient_ids) != len(set(ingredient_ids)):
         return "至少选择一种不重复的食材"
+    if seasoning_error:
+        return seasoning_error
     if not isinstance(steps, list) or not [step for step in steps if str(step).strip()]:
         return "至少填写一个烹饪步骤"
     if not isinstance(tags, list):
@@ -468,11 +579,15 @@ def save_recipe(connection, payload, is_new):
     if minutes < 1 or calories < 0:
         return "时长和热量不能小于 0"
 
+    ensure_recipe_seasonings_table(connection)
     cursor = connection.cursor(dictionary=True)
-    cursor.execute("SELECT id FROM ingredients WHERE id IN ({})".format(",".join(["%s"] * len(ingredient_ids))), ingredient_ids)
+    cursor.execute(
+        "SELECT id FROM ingredients WHERE category<>%s AND id IN ({})".format(",".join(["%s"] * len(ingredient_ids))),
+        [SEASONING_CATEGORY, *ingredient_ids],
+    )
     if {row["id"] for row in cursor.fetchall()} != set(ingredient_ids):
         cursor.close()
-        return "包含不存在的食材"
+        return "包含不存在的食材，或把调味料当成了食材"
     if is_new:
         cursor.execute("SELECT id FROM recipes WHERE id=%s", (recipe_id,))
         if cursor.fetchone():
@@ -492,6 +607,7 @@ def save_recipe(connection, payload, is_new):
             (payload["name"], payload["art"], payload["desc"], minutes, payload["diff"], calories, json.dumps(tags, ensure_ascii=False), recipe_id),
         )
         cursor.execute("DELETE FROM recipe_ingredients WHERE recipe_id=%s", (recipe_id,))
+        cursor.execute("DELETE FROM recipe_seasonings WHERE recipe_id=%s", (recipe_id,))
         cursor.execute("DELETE FROM recipe_steps WHERE recipe_id=%s", (recipe_id,))
     cursor.executemany(
         "INSERT INTO recipe_ingredients (recipe_id, ingredient_id, position) VALUES (%s, %s, %s)",
@@ -501,12 +617,21 @@ def save_recipe(connection, payload, is_new):
         "INSERT INTO recipe_steps (recipe_id, step_number, instruction) VALUES (%s, %s, %s)",
         [(recipe_id, index, str(step).strip()) for index, step in enumerate(steps, start=1) if str(step).strip()],
     )
+    cursor.executemany(
+        "INSERT INTO recipe_seasonings (recipe_id, name, icon, position) VALUES (%s, %s, %s, %s)",
+        [(recipe_id, item["name"], item["icon"], index) for index, item in enumerate(seasonings, start=1)],
+    )
     log_admin_action(
         connection,
         "recipe.create" if is_new else "recipe.update",
         "recipe",
         recipe_id,
-        {"name": payload["name"], "ingredient_count": len(ingredient_ids), "step_count": len(steps)},
+        {
+            "name": payload["name"],
+            "ingredient_count": len(ingredient_ids),
+            "seasoning_count": len(seasonings),
+            "step_count": len(steps),
+        },
     )
     connection.commit()
     cursor.close()
@@ -872,6 +997,7 @@ def create_app():
     def admin_export_catalogue():
         connection = connect()
         try:
+            ensure_recipe_seasonings_table(connection)
             workbook = build_catalogue_export(connection)
         finally:
             connection.close()
@@ -1091,7 +1217,10 @@ def create_app():
     def ingredients():
         connection = connect()
         cursor = connection.cursor(dictionary=True)
-        cursor.execute("SELECT id, name, category, icon FROM ingredients ORDER BY category, id")
+        cursor.execute(
+            "SELECT id, name, category, icon FROM ingredients WHERE category<>%s ORDER BY category, id",
+            (SEASONING_CATEGORY,),
+        )
         rows = cursor.fetchall()
         cursor.close()
         connection.close()
@@ -1134,11 +1263,11 @@ def create_app():
         if not isinstance(selected, list) or len(selected) > 5 or len(selected) != len(set(selected)):
             cursor.close(); connection.close()
             return json_error("请传入不重复的 1 至 5 种食材")
-        cursor.execute("SELECT id FROM ingredients")
+        cursor.execute("SELECT id FROM ingredients WHERE category<>%s", (SEASONING_CATEGORY,))
         valid_ids = {row["id"] for row in cursor.fetchall()}
         if not set(selected).issubset(valid_ids):
             cursor.close(); connection.close()
-            return json_error("选到了不存在的食材")
+            return json_error("选到了不存在的食材，或把调味料当成了食材")
         if selected:
             compatible = any(set(selected).issubset(recipe["ingredient_ids"]) for recipe in fetch_recipes(connection))
             if not compatible:

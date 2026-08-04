@@ -46,6 +46,17 @@ CREATE TABLE IF NOT EXISTS recipe_ingredients (
   CONSTRAINT fk_recipe_ingredients_ingredient FOREIGN KEY (ingredient_id) REFERENCES ingredients(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS recipe_seasonings (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  recipe_id VARCHAR(60) NOT NULL,
+  name VARCHAR(40) NOT NULL,
+  icon VARCHAR(16) NOT NULL,
+  position TINYINT UNSIGNED NOT NULL,
+  UNIQUE KEY uq_recipe_seasoning_position (recipe_id, position),
+  UNIQUE KEY uq_recipe_seasoning_name (recipe_id, name),
+  CONSTRAINT fk_recipe_seasonings_recipe FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS recipe_steps (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   recipe_id VARCHAR(60) NOT NULL,

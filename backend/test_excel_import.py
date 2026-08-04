@@ -107,6 +107,11 @@ def make_upload(link_position=1):
     links.append(["菜谱ID*", "食材ID*", "顺序*"])
     links.append(["tomato-egg", "tomato", link_position])
     links.append(["tomato-egg", "egg", 2])
+    seasonings = workbook.create_sheet("菜谱调味料")
+    seasonings.append(["菜谱ID*", "调味料名称*", "图标*", "顺序*"])
+    seasonings.append(["tomato-egg", "食用油", "🫗", 1])
+    seasonings.append(["tomato-egg", "盐", "🧂", 2])
+    seasonings.append(["tomato-egg", "生抽", "🍶", 3])
     steps = workbook.create_sheet("步骤")
     steps.append(["菜谱ID*", "步骤序号*", "做法*"])
     steps.append(["tomato-egg", 1, "切番茄并打散鸡蛋"])
@@ -126,6 +131,7 @@ class ExcelImportTests(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(data["recipes"][0]["art"], "🍅🍳")
         self.assertEqual(summary["recipes"]["insert"], 1)
+        self.assertEqual(summary["seasonings"], 3)
         apply_import(data, connection)
         self.assertTrue(connection.committed)
         self.assertFalse(connection.rolled_back)
@@ -150,6 +156,14 @@ class ExcelImportTests(unittest.TestCase):
         data["ingredients"][0]["分类*"] = "调味料"
         errors, _ = validate_payload(data, FakeConnection(), upload_errors, {"调味料", "蛋奶"})
         self.assertEqual(errors, [])
+
+    def test_seasonings_sheet_is_required_and_persisted(self):
+        data, upload_errors = read_upload(make_upload())
+        connection = FakeConnection()
+        errors, _ = validate_payload(data, connection, upload_errors)
+        self.assertFalse(any(error["sheet"] == "菜谱调味料" for error in errors))
+        apply_import(data, connection)
+        self.assertTrue(any("recipe_seasonings" in query for query, _ in connection.cursor_instance.executed))
 
     def test_preview_and_commit_require_an_admin_session(self):
         app_module.IMPORT_PREVIEWS.clear()
@@ -176,17 +190,16 @@ class ExcelImportTests(unittest.TestCase):
         self.assertTrue(commit.get_json()["imported"])
         self.assertTrue(commit_connection.committed)
 
-    def test_seed_catalogue_does_not_overwrite_an_existing_recipe(self):
-        existing_recipe_id = app_module.RECIPES[0]["id"]
-        connection = SeedConnection({existing_recipe_id})
+    def test_seed_catalogue_writes_recipe_seasonings(self):
+        connection = SeedConnection(set())
         with patch("backend.app.connect", return_value=connection):
             app_module.seed_catalogue()
-        recipe_inserts = [
+        seasoning_inserts = [
             params[0]
             for query, params in connection.cursor_instance.executed
-            if "INSERT INTO recipes" in query
+            if "INSERT INTO recipe_seasonings" in query
         ]
-        self.assertNotIn(existing_recipe_id, recipe_inserts)
+        self.assertIn(app_module.RECIPES[0]["id"], seasoning_inserts)
         self.assertTrue(connection.committed)
 
 

@@ -22,6 +22,8 @@ class ExportCursor:
             }]
         elif "FROM recipe_ingredients" in query:
             self.rows = [{"recipe_id": "tomato-egg", "ingredient_id": "tomato", "position": 1}]
+        elif "FROM recipe_seasonings" in query:
+            self.rows = [{"recipe_id": "tomato-egg", "name": "食用油", "icon": "🫗", "position": 1}]
         elif "FROM recipe_steps" in query:
             self.rows = [{"recipe_id": "tomato-egg", "step_number": 1, "instruction": "切番茄"}]
         elif "FROM ingredient_categories" in query:
@@ -38,6 +40,9 @@ class ExportConnection:
     def cursor(self, dictionary=False):
         return ExportCursor()
 
+    def commit(self):
+        pass
+
     def close(self):
         pass
 
@@ -46,11 +51,12 @@ class ExcelExportTests(unittest.TestCase):
     def test_export_has_import_compatible_sheets_and_rows(self):
         stream = build_catalogue_export(ExportConnection())
         workbook = load_workbook(stream, read_only=True, data_only=True)
-        self.assertEqual(workbook.sheetnames, ["使用说明", "食材", "菜谱", "菜谱食材", "步骤", "字典"])
+        self.assertEqual(workbook.sheetnames, ["使用说明", "食材", "菜谱", "菜谱食材", "菜谱调味料", "步骤", "字典"])
         self.assertEqual(list(workbook.worksheets[1].values)[1], ("tomato", "番茄", "蔬菜", "🍅"))
         self.assertEqual(list(workbook.worksheets[2].values)[1][0], "tomato-egg")
         self.assertEqual(list(workbook.worksheets[3].values)[1], ("tomato-egg", "tomato", 1))
-        self.assertEqual(list(workbook.worksheets[4].values)[1], ("tomato-egg", 1, "切番茄"))
+        self.assertEqual(list(workbook.worksheets[4].values)[1], ("tomato-egg", "食用油", "🫗", 1))
+        self.assertEqual(list(workbook.worksheets[5].values)[1], ("tomato-egg", 1, "切番茄"))
 
     def test_export_endpoint_requires_admin_and_returns_attachment(self):
         client = app_module.app.test_client()

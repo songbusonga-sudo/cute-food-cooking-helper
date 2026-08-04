@@ -12,6 +12,7 @@ SHEETS = {
     "食材": ["食材ID*", "食材名称*", "分类*", "图标*"],
     "菜谱": ["菜谱ID*", "菜谱名称*", "简介*", "用时(分钟)*", "难度*", "热量(kcal)*", "标签(用|分隔)*"],
     "菜谱食材": ["菜谱ID*", "食材ID*", "顺序*"],
+    "菜谱调味料": ["菜谱ID*", "调味料名称*", "图标*", "顺序*"],
     "步骤": ["菜谱ID*", "步骤序号*", "做法*"],
 }
 
@@ -51,8 +52,14 @@ def read_upload(file_storage):
         workbook.close()
         return None, errors
 
-    data = {"ingredients": [], "recipes": [], "links": [], "steps": []}
-    targets = (("食材", "ingredients"), ("菜谱", "recipes"), ("菜谱食材", "links"), ("步骤", "steps"))
+    data = {"ingredients": [], "recipes": [], "links": [], "seasonings": [], "steps": []}
+    targets = (
+        ("食材", "ingredients"),
+        ("菜谱", "recipes"),
+        ("菜谱食材", "links"),
+        ("菜谱调味料", "seasonings"),
+        ("步骤", "steps"),
+    )
     for sheet_name, target in targets:
         worksheet = workbook[sheet_name]
         expected = SHEETS[sheet_name]
@@ -187,6 +194,31 @@ def validate_payload(data, connection, initial_errors=None, categories=None):
         if recipe_id in links_by_recipe:
             links_by_recipe[recipe_id].append(item)
 
+    seasonings_by_recipe = {recipe_id: [] for recipe_id in recipe_ids}
+    seen_seasoning_positions = set()
+    seen_seasoning_names = set()
+    for item in data["seasonings"]:
+        row = item["_row"]
+        recipe_id = item["菜谱ID*"]
+        name = item["调味料名称*"]
+        icon = item["图标*"]
+        position = as_integer(item["顺序*"], "菜谱调味料", row, "顺序*", 1, errors)
+        item["position"] = position
+        if recipe_id not in recipe_ids:
+            errors.append(issue("菜谱调味料", row, "菜谱ID*", "必须是本次“菜谱”工作表中填写的菜谱ID"))
+        if len(name) > 40 or len(icon) > 16:
+            errors.append(issue("菜谱调味料", row, "调味料名称*或图标*", "名称最长 40 字符，图标最长 16 字符"))
+        name_key = (recipe_id, name)
+        if name_key in seen_seasoning_names:
+            errors.append(issue("菜谱调味料", row, "调味料名称*", "同一道菜不能重复填写同一种调味料"))
+        seen_seasoning_names.add(name_key)
+        position_key = (recipe_id, position)
+        if position is not None and position_key in seen_seasoning_positions:
+            errors.append(issue("菜谱调味料", row, "顺序*", "同一道菜的调味料顺序不能重复"))
+        seen_seasoning_positions.add(position_key)
+        if recipe_id in seasonings_by_recipe:
+            seasonings_by_recipe[recipe_id].append(item)
+
     steps_by_recipe = {recipe_id: [] for recipe_id in recipe_ids}
     seen_step_numbers = set()
     for item in data["steps"]:
@@ -208,9 +240,12 @@ def validate_payload(data, connection, initial_errors=None, categories=None):
     for recipe in data["recipes"]:
         recipe_id = recipe["菜谱ID*"]
         links = links_by_recipe[recipe_id]
+        seasonings = seasonings_by_recipe[recipe_id]
         steps = steps_by_recipe[recipe_id]
         if not links:
             errors.append(issue("菜谱", recipe["_row"], "菜谱ID*", "该菜谱至少需要关联一种食材"))
+        if not seasonings:
+            errors.append(issue("菜谱", recipe["_row"], "菜谱ID*", "该菜谱至少需要填写一种调味料"))
         if not steps:
             errors.append(issue("菜谱", recipe["_row"], "菜谱ID*", "该菜谱至少需要填写一个步骤"))
         positions = sorted(item["position"] for item in links if item["position"] is not None)
@@ -235,6 +270,7 @@ def validate_payload(data, connection, initial_errors=None, categories=None):
             "update": sum(item["菜谱ID*"] in existing_recipes for item in data["recipes"]),
         },
         "links": len(data["links"]),
+        "seasonings": len(data["seasonings"]),
         "steps": len(data["steps"]),
     }
     return errors, summary
@@ -275,10 +311,15 @@ def apply_import(data, connection):
         )
         recipe_ids = [item["菜谱ID*"] for item in data["recipes"]]
         cursor.executemany("DELETE FROM recipe_ingredients WHERE recipe_id=%s", [(recipe_id,) for recipe_id in recipe_ids])
+        cursor.executemany("DELETE FROM recipe_seasonings WHERE recipe_id=%s", [(recipe_id,) for recipe_id in recipe_ids])
         cursor.executemany("DELETE FROM recipe_steps WHERE recipe_id=%s", [(recipe_id,) for recipe_id in recipe_ids])
         cursor.executemany(
             "INSERT INTO recipe_ingredients (recipe_id, ingredient_id, position) VALUES (%s, %s, %s)",
             [(item["菜谱ID*"], item["食材ID*"], item["position"]) for item in data["links"]],
+        )
+        cursor.executemany(
+            "INSERT INTO recipe_seasonings (recipe_id, name, icon, position) VALUES (%s, %s, %s, %s)",
+            [(item["菜谱ID*"], item["调味料名称*"], item["图标*"], item["position"]) for item in data["seasonings"]],
         )
         cursor.executemany(
             "INSERT INTO recipe_steps (recipe_id, step_number, instruction) VALUES (%s, %s, %s)",
