@@ -517,8 +517,15 @@ def create_app():
     @app.after_request
     def allow_frontend(response):
         origin = request.headers.get("Origin", "").rstrip("/")
-        allowed_origins = {"http://localhost:5241", config["frontend_origin"]}
+        local_frontend_origins = {"http://localhost:5241", "http://127.0.0.1:5241"}
+        allowed_origins = {*local_frontend_origins, config["frontend_origin"]}
         if origin in allowed_origins:
+            response.headers["Access-Control-Allow-Origin"] = origin
+        elif (
+            origin == "null"
+            and config["frontend_origin"] in local_frontend_origins
+            and config["flask_host"] in {"127.0.0.1", "localhost"}
+        ):
             response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, X-User-Key"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, PATCH, PUT, DELETE, OPTIONS"
@@ -539,6 +546,17 @@ def create_app():
     def ping():
         """Lightweight platform liveness check that does not require MySQL to be ready yet."""
         return jsonify({"status": "ok"})
+
+    @app.route("/")
+    def frontend_page():
+        return send_file(ROOT / "index.html")
+
+    @app.route("/config.js")
+    def frontend_config():
+        return app.response_class(
+            "window.CUTE_FOOD_CONFIG = { API_ORIGIN: window.location.origin };\n",
+            mimetype="application/javascript",
+        )
 
     @app.route("/admin")
     def admin_page():
