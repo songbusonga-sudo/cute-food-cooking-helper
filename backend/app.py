@@ -242,21 +242,28 @@ def seed_catalogue():
         cursor.execute(
             """
             INSERT INTO ingredients (id, name, category, icon) VALUES (%s, %s, %s, %s)
-            ON DUPLICATE KEY UPDATE id=id
+            ON DUPLICATE KEY UPDATE name=VALUES(name), category=VALUES(category), icon=VALUES(icon)
             """,
             (ingredient["id"], ingredient["name"], ingredient["category"], ingredient["icon"]),
         )
     for recipe in RECIPES:
-        cursor.execute("SELECT id FROM recipes WHERE id=%s", (recipe["id"],))
-        if cursor.fetchone():
-            continue
         cursor.execute(
             """
             INSERT INTO recipes (id, name, art, description, minutes, difficulty, calories, tags)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+              name=VALUES(name),
+              art=VALUES(art),
+              description=VALUES(description),
+              minutes=VALUES(minutes),
+              difficulty=VALUES(difficulty),
+              calories=VALUES(calories),
+              tags=VALUES(tags)
             """,
             (recipe["id"], recipe["name"], recipe["art"], recipe["description"], recipe["minutes"], recipe["difficulty"], recipe["calories"], json.dumps(recipe["tags"], ensure_ascii=False)),
         )
+        cursor.execute("DELETE FROM recipe_ingredients WHERE recipe_id=%s", (recipe["id"],))
+        cursor.execute("DELETE FROM recipe_steps WHERE recipe_id=%s", (recipe["id"],))
         for position, ingredient_id in enumerate(recipe["ingredients"], start=1):
             cursor.execute(
                 "INSERT INTO recipe_ingredients (recipe_id, ingredient_id, position) VALUES (%s, %s, %s)",
