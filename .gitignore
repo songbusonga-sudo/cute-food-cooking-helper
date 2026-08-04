@@ -16,6 +16,7 @@ node_modules/
 backups/
 .excel-work/
 outputs/
+dist/
 
 # Development server and application logs
 *.log
