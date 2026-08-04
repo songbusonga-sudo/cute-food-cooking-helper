@@ -2,6 +2,6 @@
 builder = "RAILPACK"
 
 [deploy]
-startCommand = "gunicorn backend.app:app --bind 0.0.0.0:$PORT"
+startCommand = "python -m flask --app backend.app init-db && gunicorn backend.app:app --bind 0.0.0.0:$PORT"
 healthcheckPath = "/api/ping"
 healthcheckTimeout = 120
