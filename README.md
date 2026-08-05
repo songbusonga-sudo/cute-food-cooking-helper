@@ -51,5 +51,31 @@
 ```bash
 python -m pip install -r requirements.txt
 ```
+
+## 线上用户数据本地备份
+
+如果想把线上站点注册的用户、收藏和烹饪记录同步到本地数据库，在本地 `.env` 里保留本地 `MYSQL_*` 配置，并额外填写线上数据库配置：
+
+```bash
+ONLINE_MYSQL_HOST=线上数据库地址
+ONLINE_MYSQL_PORT=3306
+ONLINE_MYSQL_USER=线上数据库用户
+ONLINE_MYSQL_PASSWORD=线上数据库密码
+ONLINE_MYSQL_DATABASE=线上数据库名
+```
+
+然后手动运行：
+
+```bash
+npm run sync:online-users
+```
+
+脚本会把线上 `users`、`user_selected_ingredients`、`user_favorites`、`user_auth_events`、`cooking_records` 同步到本地的 `online_*` 镜像表里，不会覆盖本地开发用的原表。默认只新增/更新，不删除本地已经同步过的数据；如果想让本地镜像严格跟线上当前状态一致，可以运行：
+
+```bash
+npm run sync:online-users -- --prune
+```
+
+可以用 Windows“任务计划程序”定时执行 `npm run sync:online-users`，例如每小时或每天同步一次。
             
 ## 一个圈外萌新完全用 Codex 搓出来的产物，如果一年后我还对这方面感兴趣，我会成长多少呢

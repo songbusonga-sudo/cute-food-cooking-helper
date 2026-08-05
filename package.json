@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "python -m http.server 5241 --bind localhost",
     "build": "node scripts/build-static.mjs",
-    "api": "python -m backend.app"
+    "api": "python -m backend.app",
+    "sync:online-users": "python scripts/sync-online-user-data.py"
   }
 }
