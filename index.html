@@ -53,6 +53,7 @@
     .admin-btn{background:var(--green-soft)!important;color:var(--green-deep)!important}.admin-login-box input,.user-auth-box input{background:var(--paper);color:var(--ink);border-color:var(--line)}.pot-food-card{background:var(--paper);border-color:var(--line);box-shadow:var(--shadow)}.pot-food-card:hover{background:var(--green-soft)}.history-art{background:var(--green-soft)}.history-meta,.history-note{color:var(--muted)}.recipe:nth-child(n) .recipe-art,.topic:nth-child(n),.guide-card:nth-child(n) .guide-meta span{background:var(--green-soft)}.guide-card:nth-child(n) .guide-number{background:var(--green)}.wheel-disc{background:conic-gradient(var(--green) 0 120deg,var(--green-soft) 120deg 240deg,var(--warm) 240deg 360deg)}
     @media(max-width:600px){.utility .icon-btn.theme-toggle{display:block}}
     @media(min-width:901px){body.detail-page-active{overflow:hidden}body.detail-page-active .app{height:100vh;overflow:hidden}body.detail-page-active main{height:calc(100vh - 74px);padding-top:18px;padding-bottom:18px;overflow:hidden}body.detail-page-active #detail.active{height:100%;overflow:hidden}body.detail-page-active #detail>.mini-link{display:inline-block;margin-bottom:8px;font-size:14px}body.detail-page-active #detail .detail-layout{height:calc(100% - 38px);margin-top:0!important;grid-template-columns:minmax(300px,.84fr) minmax(470px,1.16fr);gap:18px!important;align-items:stretch}body.detail-page-active #detail .detail-layout>div:last-child{min-height:0;display:grid;grid-template-rows:auto auto auto auto minmax(0,1fr) auto;align-content:start}body.detail-page-active #detail .detail-art{height:100%;min-height:0;font-size:clamp(92px,8vw,128px)}body.detail-page-active #detail .eyebrow{margin:0 0 3px;font-size:14px}body.detail-page-active #detail h1{font-size:clamp(34px,3.2vw,48px);line-height:1.02;margin-bottom:6px}body.detail-page-active #detail #detailDesc{margin-bottom:8px;font-size:14px;line-height:1.35}body.detail-page-active #detail .card{padding:12px 16px;border-radius:18px}body.detail-page-active #detail .info-card{margin-bottom:10px}body.detail-page-active #detail .stats{margin:0 0 8px;font-size:12px}body.detail-page-active #detail h3{font-size:16px;margin-bottom:6px}body.detail-page-active #detail .ingredients-line{gap:6px}body.detail-page-active #detail .food-chip{padding:5px 8px;font-size:12px}body.detail-page-active #detail .servings{margin:8px 0;gap:7px}body.detail-page-active #detail .servings .pill{padding:7px 15px}body.detail-page-active #detail #portionText{margin:0;font-size:13px;line-height:1.35}body.detail-page-active #detail .step-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0 0}body.detail-page-active #detail .step-list li{min-height:0;margin:0;padding:7px 9px 7px 36px;border-radius:11px;font-size:13px;line-height:1.32}body.detail-page-active #detail .step-list li:before{left:8px;top:7px;width:21px;height:21px;line-height:21px;font-size:13px}body.detail-page-active #detail .hero-actions{margin-top:8px;gap:8px}body.detail-page-active #detail .hero-actions .pill{padding:8px 15px;font-size:14px}}
+    .avatar.is-admin{border-radius:999px;background:var(--green);color:#fff;font-size:12px;font-weight:900;padding:0 12px;width:auto;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   </style>
 </head>
 <body>
@@ -627,6 +628,177 @@
       };
       document.body.classList.toggle('detail-page-active',document.querySelector('#detail')?.classList.contains('active'));
       syncCookingSaveState();
+    })();
+  </script>
+  <script>
+    (function(){
+      window.adminSession=window.adminSession||{authenticated:false,username:''};
+
+      async function refreshAdminSession(){
+        try{
+          const response=await fetch(`${API_BASE}/auth/me`,{credentials:'include',cache:'no-store'});
+          const result=await response.json().catch(()=>({}));
+          window.adminSession={authenticated:response.ok&&Boolean(result.authenticated),username:result.username||''};
+        }catch{
+          window.adminSession={authenticated:false,username:''};
+        }
+        if(window.adminSession.authenticated){
+          userSession={authenticated:false,username:''};
+          favorites=[];
+        }
+        return window.adminSession;
+      }
+
+      async function refreshUserSession(){
+        try{
+          const result=await userApi('/user-auth/me',{headers:{},cache:'no-store'});
+          userSession={authenticated:Boolean(result.authenticated),username:result.username||''};
+          if(userSession.authenticated)await loadUserFavorites();
+          else favorites=[];
+        }catch{
+          userSession={authenticated:false,username:''};
+          favorites=[];
+        }
+        return userSession;
+      }
+
+      window.renderUserAccount=function(){
+        const button=$('#userAccountButton');
+        if(!button)return;
+        const adminSignedIn=Boolean(window.adminSession?.authenticated);
+        const userSignedIn=Boolean(userSession?.authenticated);
+        const username=adminSignedIn?window.adminSession.username:userSession.username;
+        button.textContent=adminSignedIn?`管理员 ${username||'admin'}`:(userSignedIn?username.slice(0,6):'👤');
+        button.classList.toggle('is-signed-in',adminSignedIn||userSignedIn);
+        button.classList.toggle('is-admin',adminSignedIn);
+        button.onclick=adminSignedIn?openAdminLogin:(userSignedIn?showCookingHistory:openUserAuthModal);
+        button.setAttribute('aria-label',adminSignedIn?`管理员 ${username}，进入管理台`:(userSignedIn?`${username}，查看烹饪记录`:'用户登录'));
+        button.title=adminSignedIn?`管理员 ${username}，进入管理台`:(userSignedIn?`${username}，查看烹饪记录`:'登录或注册');
+      };
+
+      window.openAdminLogin=async function(){
+        const admin=await refreshAdminSession();
+        renderUserAccount();
+        if(admin.authenticated){
+          window.location.href=`${API_ORIGIN}/admin`;
+          return;
+        }
+        closeUserAuthModal();
+        const modal=$('#adminLoginModal');
+        $('#adminLoginError').textContent='';
+        $('#adminLoginForm').reset();
+        modal.classList.add('show');
+        setTimeout(()=>$('#adminUsername').focus(),0);
+      };
+
+      window.openUserAuthModal=async function(){
+        const admin=await refreshAdminSession();
+        if(admin.authenticated){
+          renderUserAccount();
+          openAdminLogin();
+          return;
+        }
+        await refreshUserSession();
+        renderUserAccount();
+        const modal=$('#userAuthModal');
+        $('#userAuthError').textContent='';
+        if(userSession.authenticated){
+          $('#userAuthTabs').classList.add('hidden');
+          $('#userAuthFields').classList.add('hidden');
+          $('#userAuthSignedIn').classList.remove('hidden');
+          $('#userAuthSignedIn').textContent=`你正在以 ${userSession.username} 的身份登录。`;
+          $('#userAuthSubmit').classList.add('hidden');
+          $('#userAuthLogout').classList.remove('hidden');
+        }else{
+          $('#userAuthTabs').classList.remove('hidden');
+          $('#userAuthFields').classList.remove('hidden');
+          $('#userAuthSignedIn').classList.add('hidden');
+          $('#userAuthSubmit').classList.remove('hidden');
+          $('#userAuthLogout').classList.add('hidden');
+          setUserAuthMode(userAuthMode);
+          $('#userAuthForm').reset();
+          setTimeout(()=>$('#userAuthUsername').focus(),0);
+        }
+        modal.classList.add('show');
+      };
+
+      window.hydrateUserAuth=async function(){
+        await refreshAdminSession();
+        if(!window.adminSession.authenticated)await refreshUserSession();
+        renderUserAccount();
+        renderHome();
+        if($('#recipes').classList.contains('active'))renderRecipes();
+      };
+
+      window.submitUserAuth=async function(event){
+        event.preventDefault();
+        if(userSession.authenticated)return;
+        const button=$('#userAuthSubmit');
+        const error=$('#userAuthError');
+        button.disabled=true;
+        error.textContent='';
+        try{
+          const result=await userApi(`/user-auth/${userAuthMode==='login'?'login':'register'}`,{method:'POST',body:JSON.stringify({username:$('#userAuthUsername').value.trim(),password:$('#userAuthPassword').value})});
+          window.adminSession={authenticated:false,username:''};
+          userSession={authenticated:Boolean(result.authenticated),username:result.username||''};
+          await loadUserFavorites();
+          renderUserAccount();
+          closeUserAuthModal();
+          renderHome();
+          if($('#recipes').classList.contains('active'))renderRecipes();
+          toast(`欢迎回来，${userSession.username}！收藏夹已经为你准备好啦。`);
+        }catch(authError){
+          error.textContent=authError.message;
+        }finally{
+          button.disabled=false;
+        }
+      };
+
+      window.logoutUser=async function(){
+        const button=$('#userAuthLogout');
+        if(button)button.disabled=true;
+        try{
+          await fetch(`${API_BASE}/user-auth/logout`,{method:'POST',credentials:'include',cache:'no-store'});
+          userSession={authenticated:false,username:''};
+          favorites=[];
+          await refreshAdminSession();
+          renderUserAccount();
+          closeUserAuthModal();
+          renderHome();
+          if($('#recipes').classList.contains('active'))renderRecipes();
+          if($('#favorites').classList.contains('active'))go('home');
+          toast('已经退出登录，其他功能仍然可以继续使用。');
+        }catch{
+          toast('退出没有完成，请稍后再试。');
+        }finally{
+          if(button)button.disabled=false;
+        }
+      };
+
+      window.submitAdminLogin=async function(event){
+        event.preventDefault();
+        const button=$('#adminLoginSubmit');
+        const error=$('#adminLoginError');
+        button.disabled=true;
+        error.textContent='';
+        try{
+          const response=await fetch(`${API_BASE}/auth/login`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:$('#adminUsername').value.trim(),password:$('#adminPassword').value})});
+          const result=await response.json().catch(()=>({}));
+          if(!response.ok)throw new Error(result.error||'登录失败，请稍后再试');
+          window.adminSession={authenticated:true,username:result.username||$('#adminUsername').value.trim()};
+          userSession={authenticated:false,username:''};
+          favorites=[];
+          renderUserAccount();
+          window.location.href=`${API_ORIGIN}/admin`;
+        }catch(loginError){
+          error.textContent=loginError.message;
+          button.disabled=false;
+        }
+      };
+
+      document.querySelector('#adminLoginForm')?.addEventListener('submit',event=>{event.stopImmediatePropagation();submitAdminLogin(event)},true);
+      document.querySelector('#userAuthForm')?.addEventListener('submit',event=>{event.stopImmediatePropagation();submitUserAuth(event)},true);
+      hydrateUserAuth();
     })();
   </script>
 </body>
