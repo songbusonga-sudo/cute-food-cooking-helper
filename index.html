@@ -344,5 +344,54 @@
       };
     })();
   </script>
+  <script>
+    (function(){
+      let cookingBackView='detail';
+      let preserveCookingBack=false;
+      function activeViewId(){
+        return document.querySelector('.view.active')?.id||'home';
+      }
+      function ensureCookingBackButton(){
+        const shell=document.querySelector('#cooking .cooking-shell');
+        if(!shell||document.querySelector('#cookingBackButton'))return;
+        const style=document.createElement('style');
+        style.textContent='.cooking-shell{position:relative}.cooking-back-link{position:absolute;left:clamp(14px,3vw,28px);top:18px;z-index:2}.cooking-back-link:after{content:""}@media(max-width:600px){.cooking-back-link{position:static;margin-bottom:14px}}';
+        document.head.appendChild(style);
+        const button=document.createElement('button');
+        button.id='cookingBackButton';
+        button.type='button';
+        button.className='mini-link cooking-back-link';
+        button.textContent='< 返回上一步';
+        button.onclick=returnFromCooking;
+        shell.prepend(button);
+      }
+      window.returnFromCooking=function(){
+        const target=cookingBackView||'detail';
+        if(target==='detail'&&currentRecipe){
+          openRecipe(currentRecipe,currentRecipeData||getRecipe(currentRecipe));
+          return;
+        }
+        go(target);
+      };
+      const previousStartCooking=startCooking;
+      window.startCooking=function(){
+        if(!preserveCookingBack){
+          const from=activeViewId();
+          cookingBackView=from==='cooking'?'detail':from;
+        }
+        preserveCookingBack=false;
+        ensureCookingBackButton();
+        previousStartCooking();
+      };
+      window.quickCook=function(id){
+        const from=activeViewId();
+        cookingBackView=from==='cooking'?'recipes':from;
+        preserveCookingBack=true;
+        openRecipe(id,getRecipe(id));
+        setTimeout(startCooking,80);
+      };
+      ensureCookingBackButton();
+    })();
+  </script>
 </body>
 </html>
