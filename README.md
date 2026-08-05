@@ -4,7 +4,7 @@
 
 ## 在线访问
 
-- 网站：https://mizkjfood.asia
+- 网站：https://mizkifood.asia
 
 ## 主要功能
 
