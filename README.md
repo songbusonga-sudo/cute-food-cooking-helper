@@ -19,8 +19,21 @@
 
 ## 版本
 
-当前版本：v1.0.0
-查看完整更新记录：[CHANGELOG.md](./CHANGELOG.md)
+当前版本：**v1.1.0 - 手机体验与账号状态修复版**
+
+- 在线访问：[https://mizkifood.asia](https://mizkifood.asia)
+- 最新版本说明与下载：[GitHub Releases](https://github.com/songbusonga-sudo/cute-food-cooking-helper/releases/latest)
+- 下载本次 ZIP：[cute-food-cooking-helper-v1.1.0.zip](https://github.com/songbusonga-sudo/cute-food-cooking-helper/releases/latest/download/cute-food-cooking-helper-v1.1.0.zip)
+
+### v1.1.0 更新亮点
+
+- 新增移动端菜谱左右滑动翻页动画，滑到一半时可以同时看到左右卡片。
+- 优化菜谱详情页桌面端展示，现在内容尽量一屏完整显示，不用再往下滑。
+- 修复管理员登录状态和普通用户登录状态混在一起的问题。
+- 修复普通用户退出后，登录弹窗仍显示旧账号的问题。
+- 管理员登录后，右上角会明确显示管理员账号。
+- 优化“我的”、收藏、烹饪记录等入口体验。
+- 优化移动端菜谱卡片视觉和交互细节。
 
 
 ## 技术栈
@@ -38,5 +51,5 @@
 ```bash
 python -m pip install -r requirements.txt
 ```
-
+            
 ## 一个圈外萌新完全用 Codex 搓出来的产物，如果一年后我还对这方面感兴趣，我会成长多少呢
