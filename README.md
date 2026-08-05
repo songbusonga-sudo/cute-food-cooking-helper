@@ -17,6 +17,12 @@
 - 管理员后台
 - Excel 菜谱导入导出
 
+## 版本
+
+当前版本：v1.0.0
+查看完整更新记录：[CHANGELOG.md](./CHANGELOG.md)
+
+
 ## 技术栈
 
 - 前端：HTML、CSS、JavaScript
@@ -31,5 +37,6 @@
 
 ```bash
 python -m pip install -r requirements.txt
+```
 
-##一个圈外萌新完全用codex搓出来的产物，如果一年后我还对这方面感兴趣我会成长多少呢
+## 一个圈外萌新完全用 Codex 搓出来的产物，如果一年后我还对这方面感兴趣，我会成长多少呢
