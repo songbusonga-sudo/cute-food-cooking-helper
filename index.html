@@ -43,11 +43,13 @@
     @media(max-width:900px){nav{display:none}.entry-grid,.recipe-grid{grid-template-columns:repeat(2,1fr)}.topic-grid{grid-template-columns:repeat(3,1fr)}.ingredient-layout{grid-template-columns:1fr 1fr}.pot-panel{position:relative;top:auto;grid-column:auto;min-height:330px}.recommend-panel{min-height:auto}.fridge-note{grid-template-columns:105px 1fr}.fridge-note .pill{grid-column:span 2;justify-self:start}.detail-layout,.random-layout{grid-template-columns:1fr}}
     @media(max-width:600px){header{height:62px;padding:0 16px}.brand{font-size:17px}.utility .icon-btn:not(.avatar){display:none}main{padding:20px 15px 88px}.hero{min-height:430px;padding:35px 25px;border-radius:26px}.hero-copy{max-width:85%}.hero-copy p{font-size:15px}.f1{right:7%;top:10%}.f2{right:6%;bottom:9%}.f3{right:32%;bottom:5%}.f4{display:none}.entry-grid,.recipe-grid,.topic-grid,.choice-grid{grid-template-columns:1fr}.section{margin-top:31px}.entry-card{min-height:160px}.entry-card .art{font-size:54px}.fridge-note{grid-template-columns:78px 1fr;padding:14px}.fridge-art{height:78px;font-size:53px}.page-top{align-items:start;flex-direction:column;gap:8px}.recipe-search-row{justify-content:stretch}.recipe-search{width:100%}.recipe-pagination{gap:5px}.recipe-page-button{min-width:34px}.ingredient-layout{grid-template-columns:1fr}.pot-panel{grid-column:auto;min-height:355px}.ingredient-list{max-height:none}.detail-art{min-height:230px;font-size:125px}.fridge-shell{grid-template-columns:1fr}.mobile-tabs{position:fixed;z-index:20;display:flex;justify-content:space-around;align-items:center;bottom:0;left:0;right:0;height:67px;background:rgba(255,253,247,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line)}.mobile-tabs button{background:transparent;font-size:11px;color:#7b6d61;font-weight:800}.mobile-tabs span{display:block;font-size:20px}.cook-stage{min-height:205px}.cooking-shell{padding:20px 14px}.wheel-zone{min-height:350px}}
     @media(max-width:600px){.guide-steps{grid-template-columns:1fr}.guide-card{min-height:0}}
-    @media(max-width:600px){#recipeGrid{touch-action:pan-y}}
+    @media(max-width:600px){#recipeGrid{touch-action:pan-y}#recipeGrid.recipe-swipe-grid{display:block;overflow:hidden;position:relative}.recipe-swipe-stage{overflow:hidden;padding:2px 0 5px}.recipe-swipe-track{display:flex;gap:14px;will-change:transform;transform:translate3d(0,0,0)}#recipeGrid:not(.is-dragging) .recipe-swipe-track{transition:transform .28s cubic-bezier(.2,.78,.22,1)}.recipe-swipe-page{flex:0 0 100%;min-width:0}.recipe-swipe-page .recipe{height:100%}.recipe-swipe-page.is-side{transform:scale(.985);opacity:.92}.recipe-swipe-page.is-active{transform:scale(1);opacity:1}.recipe-swipe-page{transition:transform .28s cubic-bezier(.2,.78,.22,1),opacity .28s ease}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
     @media(max-width:900px){.card-game{grid-template-columns:1fr}.card-deck-zone{min-height:250px}.card-deck{margin-bottom:16px}.food-card-grid{grid-template-columns:repeat(5,minmax(105px,1fr));overflow-x:auto;padding:8px 5px 13px}.food-card{min-height:218px}}
     @media(max-width:600px){.card-game{gap:15px}.card-deck-zone,.card-play-zone{border-radius:24px;padding:18px}.card-deck-zone{min-height:220px}.card-deck{transform:scale(.8);margin:-15px 0 4px}.card-deck-zone h2,.card-game-head h2{font-size:21px}.card-game-head{align-items:flex-start;flex-direction:column}.food-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible;min-height:0}.food-card{min-height:220px}.card-game-actions{justify-content:stretch}.card-game-actions .pill{flex:1;padding:10px 9px}}
     .admin-btn{background:#e7f4ed!important;color:var(--green-deep)}.admin-login-box,.user-auth-box{max-width:390px;text-align:left}.admin-login-box h2,.user-auth-box h2{font-size:24px;margin-bottom:5px}.admin-login-box label,.user-auth-box label{display:grid;gap:6px;font-size:13px;font-weight:800;margin-top:14px}.admin-login-box input,.user-auth-box input{border:1px solid var(--line);border-radius:13px;background:#fff;padding:11px 12px;outline:none}.admin-login-box input:focus,.user-auth-box input:focus{border-color:var(--green)}.admin-login-box .modal-art,.user-auth-box .modal-art{line-height:1;margin-bottom:8px}.admin-login-error,.user-auth-error{min-height:20px;margin:12px 0 0;color:#b65b55;font-weight:700;font-size:13px}.user-auth-tabs{display:flex;gap:8px;margin:18px 0 4px}.user-auth-tabs button{flex:1;border:1px solid var(--line);border-radius:12px;background:#fff;padding:9px;font-weight:800;color:var(--muted)}.user-auth-tabs button.active{border-color:#9dceb9;background:var(--green-soft);color:var(--green-deep)}.user-auth-status{margin:14px 0;padding:12px;border-radius:12px;background:var(--green-soft);color:var(--green-deep);font-weight:800}.avatar.is-signed-in{background:var(--green-soft);color:var(--green-deep);font-size:12px;font-weight:800;padding:0 11px;width:auto;min-width:44px}.pot-ingredients{width:min(100%,330px);gap:8px}.pot-food-card{display:flex;align-items:center;gap:7px;min-width:104px;padding:8px 10px;border:1px solid #e6d7c5;border-radius:14px;background:#fff;color:var(--ink);box-shadow:0 5px 12px #84653e12;animation:fall .35s ease both}.pot-food-card:hover{border-color:var(--green);background:#f2faf5}.pot-food-card .pot-food-icon{font-size:21px;line-height:1}.pot-food-card b{font-size:13px;white-space:nowrap}.pot-food-card .pot-food-remove{margin-left:auto;color:#9a8572;font-size:16px;line-height:1}.history-list{display:grid;gap:12px}.history-card{display:grid;grid-template-columns:68px minmax(0,1fr) auto;align-items:center;gap:14px;padding:15px}.history-art{display:grid;place-items:center;width:68px;height:68px;border-radius:18px;background:#e7f4ed;font-size:34px}.history-card h3{margin-bottom:4px}.history-meta{display:flex;flex-wrap:wrap;gap:7px;font-size:12px;color:#86786d}.history-note{margin:7px 0 0;font-size:13px;color:#6f6257}.history-empty{grid-column:1/-1;text-align:center;padding:55px}.history-account{margin-top:18px;text-align:center}@media(max-width:600px){.utility .icon-btn.admin-btn{display:block}.pot-panel{min-height:292px;padding:15px}.pot-wrap{transform:scale(.76);margin:-16px 0 -10px}.pot-ingredients{width:100%;justify-content:center}.pot-food-card{min-width:unset;padding:7px 9px}.ingredient-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.ingredient{min-height:96px;padding:10px}.ingredient .food-icon{font-size:29px}.food-card-grid{grid-template-columns:repeat(5,minmax(124px,1fr));overflow-x:auto;overflow-y:visible;scroll-snap-type:x mandatory;padding:8px 4px 14px}.food-card{min-height:208px;scroll-snap-align:center}.card-play-zone{overflow:hidden}.history-card{grid-template-columns:56px minmax(0,1fr);padding:13px}.history-art{width:56px;height:56px;font-size:29px}.history-card>.pill{grid-column:2}.history-note{grid-column:1/-1}.history-meta{gap:5px}}
+    .my-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.my-actions .pill{white-space:nowrap}.my-actions .pill.active{background:var(--green);border-color:var(--green);color:#fff}@media(max-width:600px){.my-actions{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.my-actions .pill{width:100%;padding:10px 8px;font-size:13px}}
+    .guide-finish{gap:10px;flex-wrap:wrap}.guide-finish .pill{min-width:142px}.guide-finish .cook-save-btn[disabled]{cursor:not-allowed}body{overflow-x:hidden}@media(max-width:900px){#detail .detail-layout{grid-template-columns:minmax(0,1fr);gap:14px!important;width:100%;max-width:100%}#detail .detail-layout>*{min-width:0}#detail .detail-art{height:auto;min-height:220px;font-size:clamp(68px,22vw,98px);line-height:1.05;text-align:center;padding:18px;overflow:hidden}}@media(max-width:600px){.recipe-art{height:116px;padding:14px 42px 12px 18px}.recipe-art-stack{font-size:48px!important;gap:6px}.recipe-art-stack.art-count-1{font-size:58px!important}.recipe-art-stack.art-count-2{font-size:50px!important}.recipe-art-stack.art-count-3{font-size:43px!important}.recipe-art-stack.art-count-4,.recipe-art-stack.art-count-5{font-size:34px!important}#detail .detail-art{min-height:180px;font-size:clamp(54px,18vw,78px);border-radius:20px}.result-art{font-size:68px}.wheel-center{width:82px;height:82px;font-size:52px}.guide-finish{display:grid;grid-template-columns:1fr 1fr;justify-content:stretch}.guide-finish .pill{width:100%;min-width:0;padding:10px 8px}}
     .admin-btn{background:var(--green-soft)!important;color:var(--green-deep)!important}.admin-login-box input,.user-auth-box input{background:var(--paper);color:var(--ink);border-color:var(--line)}.pot-food-card{background:var(--paper);border-color:var(--line);box-shadow:var(--shadow)}.pot-food-card:hover{background:var(--green-soft)}.history-art{background:var(--green-soft)}.history-meta,.history-note{color:var(--muted)}.recipe:nth-child(n) .recipe-art,.topic:nth-child(n),.guide-card:nth-child(n) .guide-meta span{background:var(--green-soft)}.guide-card:nth-child(n) .guide-number{background:var(--green)}.wheel-disc{background:conic-gradient(var(--green) 0 120deg,var(--green-soft) 120deg 240deg,var(--warm) 240deg 360deg)}
     @media(max-width:600px){.utility .icon-btn.theme-toggle{display:block}}
   </style>
@@ -71,13 +73,13 @@
       <section class="view" id="recipes"><div class="page-top"><div><p class="eyebrow">🍽 菜谱乐园</p><h1>来菜谱乐园逛逛吧！</h1><p class="muted">每一道菜都是小锅画出来的可爱样子。</p></div></div><div class="recipe-search-row"><label class="recipe-search" for="recipeBrowseSearch"><span aria-hidden="true">⌕</span><input id="recipeBrowseSearch" type="search" placeholder="搜索菜名、食材或标签" oninput="searchRecipes()"><button type="button" class="recipe-search-clear" aria-label="清空搜索" title="清空搜索" onclick="clearRecipeSearch()">×</button></label></div><div class="filters" id="filters"></div><div class="recipe-grid" id="recipeGrid"></div><div class="recipe-pagination" id="recipePagination"></div></section>
       <section class="view" id="results"><div class="page-top"><div><p class="eyebrow">✨ 小锅的结果单</p><h1>小锅找到这些好吃的！</h1><p class="muted" id="resultSub">按照你的小锅食材配出来啦。</p></div><button class="pill" onclick="go('ingredients')">&lt; 再选一点</button></div><div class="result-note">🍲 这些食材已经可以做好吃的啦！还可以继续加，也可以马上开做。</div><div class="recipe-grid" id="resultGrid"></div></section>
       <section class="view" id="detail"><button class="mini-link" onclick="go('recipes')">返回菜谱乐园</button><div class="detail-layout" style="margin-top:12px"><div class="detail-art" id="detailArt">🍅</div><div><p class="eyebrow">小锅的今日菜单</p><h1 id="detailName">番茄炒蛋</h1><p class="muted" id="detailDesc"></p><div class="card info-card"><div class="stats" id="detailStats"></div><h3>食材小队</h3><div class="ingredients-line" id="detailIngredients"></div><div class="servings" id="servingBtns"><button class="pill selected" data-serv="1">1 人</button><button class="pill" data-serv="2">2 人</button><button class="pill" data-serv="3">3 人</button></div><p class="muted" id="portionText">小饭量：番茄 1 个、鸡蛋 2 个</p></div><div class="card info-card"><h3>小锅做法</h3><ol class="step-list" id="detailSteps"></ol></div><div class="hero-actions"><button class="pill primary" onclick="startCooking()">开始烹饪</button><button class="pill" id="detailFav" onclick="toggleFavorite(currentRecipe)">♡ 收藏这道菜</button></div></div></div></section>
-      <section class="view" id="cooking"><div class="cooking-shell"><div class="cooking-guide-head"><p class="eyebrow">🍳 跟着小锅慢慢做</p><h1 id="cookTitle">番茄炒蛋</h1><p class="muted">把每一步照着做，时间、分量和火候都写在卡片里。</p></div><div class="guide-steps" id="cookSteps"></div><div class="guide-finish"><button class="pill primary" onclick="finishCooking()">做好啦，保存烹饪记录</button></div></div></section>
+      <section class="view" id="cooking"><div class="cooking-shell"><div class="cooking-guide-head"><p class="eyebrow">🍳 跟着小锅慢慢做</p><h1 id="cookTitle">番茄炒蛋</h1><p class="muted">把每一步照着做，时间、分量和火候都写在卡片里。</p></div><div class="guide-steps" id="cookSteps"></div><div class="guide-finish"><button id="saveCookingRecordButton" class="pill primary cook-save-btn" type="button" onclick="finishCooking()">保存烹饪记录</button><button class="pill cook-done-btn" type="button" onclick="completeCookingOnly()">已做完</button></div></div></section>
       <section class="view" id="random"><div class="page-top"><div><p class="eyebrow">🎲 幸运选择器</p><h1>今天吃什么，交给幸运吧！</h1><p class="muted">转转小转盘，或抽两张小锅准备好的菜谱卡。</p></div></div><div class="mode-tabs"><button class="pill selected" id="wheelModeButton" onclick="setRandomMode('wheel')">幸运转盘</button><button class="pill" id="cardModeButton" onclick="setRandomMode('cards')">食物卡牌</button></div><div id="wheelMode" class="random-mode"><div class="random-layout"><div><div class="wheel-zone"><div class="wheel" id="wheel"><div class="wheel-disc" id="wheelDisc"></div><span class="wheel-pointer" aria-hidden="true">▼</span><span class="wheel-center" aria-hidden="true">🍜</span></div></div><div style="text-align:center;margin-top:16px"><button class="pill peach" onclick="spinWheel()">✨ 转动幸运转盘</button></div></div><div class="random-result"><div class="result-card"><div class="result-art" id="randomArt">🍅🍳</div><h2 id="randomName">番茄炒蛋</h2><p class="muted" id="randomReason">十分钟就能完成，酸甜柔软，很适合不想费脑筋的今天。</p><div class="stats"><span>⏱ <b id="randomTime">10 分钟</b></span><span>💰 低预算</span><span>👤 1-2 人</span></div><div class="hero-actions"><button class="pill primary" onclick="openRandomRecipe()">看看做法</button><button class="pill" onclick="spinWheel()">再随机一次</button></div></div></div></div></div><div id="cardMode" class="random-mode is-hidden"><div class="card-game"><aside class="card-deck-zone"><div class="card-deck" aria-hidden="true"><i class="deck-card"></i></div><h2>小锅牌堆</h2><p class="muted">每一张都藏着一份来自菜谱库的小惊喜。</p><button id="startCardButton" class="pill peach" onclick="startCardDeal()">开始抽卡</button></aside><div class="card-play-zone"><div class="card-game-head"><div><p class="eyebrow">✦ 食物卡牌</p><h2>点两张，选今天的主角</h2></div><span class="counter" id="cardPickCounter">等待抽卡</span></div><p class="card-game-status" id="cardGameStatus" role="status">小锅已经把牌洗好啦，准备抽 5 张菜谱卡。</p><div class="food-card-grid" id="foodCardGrid"></div><div class="card-game-actions"><button id="restartCardsButton" class="pill" onclick="resetCardGame()" disabled>重新抽卡</button></div></div></div></div></section>
       <section class="view" id="recommend"><div class="page-top"><div><p class="eyebrow">💬 按需求推荐</p><h1>告诉小锅你今天的想法吧！</h1><p class="muted">点一点小卡片，剩下的让小锅来搭配。</p></div></div><div class="card"><div class="choice-grid" id="choices"><button class="choice selected" data-choice="一人食"><strong>🧑</strong>一个人也要好好吃饭</button><button class="choice" data-choice="15分钟"><strong>⏱</strong>15 分钟快手</button><button class="choice" data-choice="清淡"><strong>🥬</strong>想吃清淡一点</button><button class="choice" data-choice="高蛋白"><strong>💪</strong>加一点高蛋白</button><button class="choice" data-choice="微辣"><strong>🌶️</strong>一点点微辣</button><button class="choice" data-choice="带饭"><strong>🍱</strong>明天也想带饭</button></div><div style="text-align:center;margin-top:22px"><button class="pill peach" onclick="makeRecommendation()">帮我推荐 ✦</button></div><div class="recommend-output" id="recommendOutput"><div class="result-note" id="recommendText"></div><div class="recipe-grid" id="recommendRecipes"></div></div></div></section>
-      <section class="view" id="favorites"><div class="page-top"><div><p class="eyebrow">♡ 我的小收藏</p><h1>这些菜被你喜欢着</h1><p class="muted">登录后，收藏会安全保存在你的账号里。</p></div></div><div class="recipe-grid" id="favoriteGrid"></div></section>
-      <section class="view" id="history"><div class="page-top"><div><p class="eyebrow">✦ 我的烹饪记录</p><h1>小锅记住了这些香香时刻</h1><p class="muted">只有登录账号后完成的烹饪，才会保存在这里。</p></div><button class="pill" onclick="openUserAuthModal()">账号管理</button></div><div class="history-list" id="historyList"></div></section>
+      <section class="view" id="favorites"><div class="page-top"><div><p class="eyebrow">♡ 我的小收藏</p><h1>这些菜被你喜欢着</h1><p class="muted">登录后，收藏会安全保存在你的账号里。</p></div><div class="my-actions" aria-label="我的页面入口"><button class="pill" onclick="showCookingHistory()">🍳 烹饪记录</button><button class="pill active" onclick="showFavorites()">♡ 我的收藏</button><button class="pill" onclick="openUserAuthModal()">👤 账号管理</button></div></div><div class="recipe-grid" id="favoriteGrid"></div></section>
+      <section class="view" id="history"><div class="page-top"><div><p class="eyebrow">✦ 我的烹饪记录</p><h1>小锅记住了这些香香时刻</h1><p class="muted">只有登录账号后完成的烹饪，才会保存在这里。</p></div><div class="my-actions" aria-label="我的页面入口"><button class="pill active" onclick="showCookingHistory()">🍳 烹饪记录</button><button class="pill" onclick="showFavorites()">♡ 我的收藏</button><button class="pill" onclick="openUserAuthModal()">👤 账号管理</button></div></div><div class="history-list" id="historyList"></div></section>
     </main>
-    <div class="mobile-tabs"><button onclick="go('home')"><span>🏠</span>首页</button><button onclick="go('ingredients')"><span>🥕</span>选食材</button><button onclick="go('random')"><span>🎲</span>随机</button><button onclick="go('recipes')"><span>🍽</span>菜谱</button><button onclick="showFavorites()"><span>♡</span>我的</button></div>
+    <div class="mobile-tabs"><button onclick="go('home')"><span>🏠</span>首页</button><button onclick="go('ingredients')"><span>🥕</span>选食材</button><button onclick="go('random')"><span>🎲</span>随机</button><button onclick="go('recipes')"><span>🍽</span>菜谱</button><button onclick="showMyKitchen()"><span>♡</span>我的</button></div>
   </div><div class="toast" id="toast"></div><div class="modal" id="adminLoginModal" role="dialog" aria-modal="true" aria-labelledby="adminLoginTitle"><form class="modal-box admin-login-box" id="adminLoginForm"><div class="modal-art" aria-hidden="true">⚙</div><h2 id="adminLoginTitle">管理员登录</h2><p class="muted">验证后进入小锅管理台。</p><label>管理员账号<input id="adminUsername" autocomplete="username" required></label><label>管理员密码<input id="adminPassword" type="password" autocomplete="current-password" required></label><p id="adminLoginError" class="admin-login-error" role="alert"></p><div class="modal-actions"><button type="button" class="pill" onclick="closeAdminLogin()">取消</button><button id="adminLoginSubmit" class="pill primary">进入管理台</button></div></form></div><div class="modal" id="userAuthModal" role="dialog" aria-modal="true" aria-labelledby="userAuthTitle"><form class="modal-box user-auth-box" id="userAuthForm"><div class="modal-art" aria-hidden="true">👤</div><h2 id="userAuthTitle">登录小锅</h2><p id="userAuthHint" class="muted">登录后可以收藏喜欢的菜谱。</p><div id="userAuthTabs" class="user-auth-tabs"><button type="button" class="active" data-mode="login" onclick="setUserAuthMode('login')">登录</button><button type="button" data-mode="register" onclick="setUserAuthMode('register')">注册</button></div><div id="userAuthFields"><label>账号<input id="userAuthUsername" autocomplete="username" maxlength="32" required></label><label>密码<input id="userAuthPassword" type="password" autocomplete="current-password" maxlength="72" required></label></div><div id="userAuthSignedIn" class="user-auth-status hidden"></div><p id="userAuthError" class="user-auth-error" role="alert"></p><div class="modal-actions"><button type="button" class="pill" onclick="closeUserAuthModal()">取消</button><button id="userAuthLogout" type="button" class="pill hidden" onclick="logoutUser()">退出登录</button><button id="userAuthSubmit" class="pill primary">登录</button></div></form></div>
   <script src="config.js"></script>
   <script>
@@ -404,7 +406,9 @@
       const MOBILE_RECIPE_QUERY='(max-width:600px)';
       const DESKTOP_RECIPE_PAGE_SIZE=6;
       let recipeResizeTimer=0;
+      let recipeSwipeSettleTimer=0;
       let recipeSwipeStart=null;
+      let recipeSwipeSuppressClickUntil=0;
       function isMobileRecipeBrowse(){
         return window.matchMedia&&window.matchMedia(MOBILE_RECIPE_QUERY).matches;
       }
@@ -418,6 +422,36 @@
       function clampRecipeBrowsePage(page,totalPages){
         return Math.min(Math.max(1,Number(page)||1),totalPages);
       }
+      function recipeSwipeStep(){
+        const stage=$('#recipeSwipeStage');
+        const track=$('#recipeSwipeTrack');
+        const gap=parseFloat(getComputedStyle(track||document.documentElement).columnGap)||0;
+        return (stage?.clientWidth||0)+gap;
+      }
+      function recipeSwipeActiveIndex(){
+        return Number($('#recipeSwipeStage')?.dataset.activeIndex||0);
+      }
+      function updateRecipeSwipePosition(dragX=0,animate=false,targetIndex=recipeSwipeActiveIndex()){
+        const grid=$('#recipeGrid');
+        const track=$('#recipeSwipeTrack');
+        if(!grid||!track)return;
+        track.style.transition=animate?'':'none';
+        track.style.transform=`translate3d(${(-targetIndex*recipeSwipeStep())+dragX}px,0,0)`;
+      }
+      function renderRecipeSwipeGrid(grid,list,totalPages,emptyHtml){
+        if(!list.length){
+          grid.classList.remove('recipe-swipe-grid','is-dragging');
+          grid.innerHTML=emptyHtml;
+          return;
+        }
+        const pageSize=recipeBrowsePageSize();
+        const pages=[recipeBrowsePage-1,recipeBrowsePage,recipeBrowsePage+1].filter(page=>page>=1&&page<=totalPages);
+        const activeIndex=Math.max(0,pages.indexOf(recipeBrowsePage));
+        grid.classList.add('recipe-swipe-grid');
+        grid.classList.remove('is-dragging');
+        grid.innerHTML=`<div class="recipe-swipe-stage" id="recipeSwipeStage" data-active-index="${activeIndex}"><div class="recipe-swipe-track" id="recipeSwipeTrack">${pages.map(page=>{const recipe=list[(page-1)*pageSize];return `<div class="recipe-swipe-page ${page===recipeBrowsePage?'is-active':'is-side'}" data-page="${page}">${recipe?recipeCard(recipe):''}</div>`}).join('')}</div></div>`;
+        requestAnimationFrame(()=>updateRecipeSwipePosition(0,false,activeIndex));
+      }
       window.renderRecipes=function(){
         const tags=['\u5168\u90e8','\u5feb\u624b','\u6e05\u6de1','\u5e26\u996d','\u9ad8\u86cb\u767d','\u65b0\u624b'];
         const filters=$('#filters');
@@ -430,7 +464,13 @@
         recipeBrowsePage=Math.min(recipeBrowsePage,totalPages);
         const start=(recipeBrowsePage-1)*pageSize;
         const pageRecipes=list.slice(start,start+pageSize);
-        grid.innerHTML=pageRecipes.length?pageRecipes.map(recipe=>recipeCard(recipe)).join(''):'<div class="card" style="grid-column:1/-1;text-align:center;padding:48px"><h2>&#27809;&#26377;&#25214;&#21040;&#36825;&#36947;&#33756;</h2><p class="muted">&#25442;&#20010;&#33756;&#21517;&#12289;&#39135;&#26448;&#25110;&#26631;&#31614;&#35797;&#35797;&#30475;&#12290;</p></div>';
+        const emptyHtml='<div class="card" style="grid-column:1/-1;text-align:center;padding:48px"><h2>&#27809;&#26377;&#25214;&#21040;&#36825;&#36947;&#33756;</h2><p class="muted">&#25442;&#20010;&#33756;&#21517;&#12289;&#39135;&#26448;&#25110;&#26631;&#31614;&#35797;&#35797;&#30475;&#12290;</p></div>';
+        if(isMobileRecipeBrowse()){
+          renderRecipeSwipeGrid(grid,list,totalPages,emptyHtml);
+        }else{
+          grid.classList.remove('recipe-swipe-grid','is-dragging');
+          grid.innerHTML=pageRecipes.length?pageRecipes.map(recipe=>recipeCard(recipe)).join(''):emptyHtml;
+        }
         renderRecipePagination(totalPages);
       };
       window.setRecipePage=function(page,options={}){
@@ -445,19 +485,74 @@
         grid.dataset.swipeReady='true';
         grid.addEventListener('touchstart',event=>{
           if(!isMobileRecipeBrowse()||!$('#recipes')?.classList.contains('active'))return;
+          window.clearTimeout(recipeSwipeSettleTimer);
           const touch=event.changedTouches[0];
-          recipeSwipeStart={x:touch.clientX,y:touch.clientY,time:Date.now()};
+          recipeSwipeStart={x:touch.clientX,y:touch.clientY,time:Date.now(),page:recipeBrowsePage,totalPages:Math.max(1,Math.ceil(filteredBrowseRecipes().length/recipeBrowsePageSize())),horizontal:false,dragging:false};
+          updateRecipeSwipePosition(0,false);
         },{passive:true});
+        grid.addEventListener('touchmove',event=>{
+          if(!recipeSwipeStart||!isMobileRecipeBrowse()||!$('#recipes')?.classList.contains('active'))return;
+          const touch=event.changedTouches[0];
+          const dx=touch.clientX-recipeSwipeStart.x;
+          const dy=touch.clientY-recipeSwipeStart.y;
+          if(!recipeSwipeStart.horizontal){
+            if(Math.abs(dx)<8&&Math.abs(dy)<8)return;
+            if(Math.abs(dy)>Math.abs(dx)*1.1){
+              recipeSwipeStart=null;
+              return;
+            }
+            recipeSwipeStart.horizontal=true;
+          }
+          event.preventDefault();
+          recipeSwipeStart.dragging=true;
+          grid.classList.add('is-dragging');
+          let dragX=dx;
+          if((recipeSwipeStart.page===1&&dx>0)||(recipeSwipeStart.page===recipeSwipeStart.totalPages&&dx<0))dragX=dx*.35;
+          updateRecipeSwipePosition(dragX,false);
+        },{passive:false});
         grid.addEventListener('touchend',event=>{
           if(!recipeSwipeStart||!isMobileRecipeBrowse()||!$('#recipes')?.classList.contains('active'))return;
           const touch=event.changedTouches[0];
           const dx=touch.clientX-recipeSwipeStart.x;
           const dy=touch.clientY-recipeSwipeStart.y;
           const elapsed=Date.now()-recipeSwipeStart.time;
+          const startPage=recipeSwipeStart.page;
+          const totalPages=recipeSwipeStart.totalPages;
+          const wasDragging=recipeSwipeStart.dragging;
           recipeSwipeStart=null;
-          if(Math.abs(dx)<50||Math.abs(dx)<Math.abs(dy)*1.35||elapsed>900)return;
-          setRecipePage(recipeBrowsePage+(dx<0?1:-1),{preserveScroll:true});
+          if(!wasDragging||Math.abs(dx)<Math.abs(dy)*1.25){
+            updateRecipeSwipePosition(0,true);
+            return;
+          }
+          const step=Math.max(1,recipeSwipeStep());
+          const passedDistance=Math.abs(dx)>Math.min(110,Math.max(58,step*.24));
+          const passedFlick=Math.abs(dx)>34&&elapsed<260;
+          const targetPage=clampRecipeBrowsePage(startPage+(dx<0?1:-1),totalPages);
+          const shouldTurn=targetPage!==startPage&&(passedDistance||passedFlick);
+          grid.classList.remove('is-dragging');
+          recipeSwipeSuppressClickUntil=Date.now()+360;
+          if(shouldTurn){
+            const activeIndex=recipeSwipeActiveIndex();
+            recipeBrowsePage=targetPage;
+            renderRecipePagination(totalPages);
+            updateRecipeSwipePosition(0,true,activeIndex+(targetPage>startPage?1:-1));
+            recipeSwipeSettleTimer=window.setTimeout(renderRecipes,290);
+          }else{
+            updateRecipeSwipePosition(0,true);
+          }
         },{passive:true});
+        grid.addEventListener('touchcancel',()=>{
+          if(!recipeSwipeStart)return;
+          recipeSwipeStart=null;
+          grid.classList.remove('is-dragging');
+          updateRecipeSwipePosition(0,true);
+        },{passive:true});
+        grid.addEventListener('click',event=>{
+          if(Date.now()<recipeSwipeSuppressClickUntil){
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        },true);
       }
       window.addEventListener('resize',()=>{
         if(!$('#recipes')?.classList.contains('active'))return;
@@ -466,6 +561,69 @@
       },{passive:true});
       bindRecipeSwipe();
       renderRecipes();
+    })();
+  </script>
+  <script>
+    (function(){
+      function cookingSaveButton(){
+        return document.querySelector('#saveCookingRecordButton');
+      }
+      function syncCookingSaveState(){
+        const button=cookingSaveButton();
+        if(!button)return;
+        const signedIn=Boolean(typeof userSession!=='undefined'&&userSession.authenticated);
+        button.disabled=!signedIn;
+        button.title=signedIn?'保存到我的烹饪记录':'登录后才能保存烹饪记录';
+        button.setAttribute('aria-disabled',String(!signedIn));
+      }
+      window.completeCookingOnly=function(){
+        const recipe=getRecipe(currentRecipe);
+        if(!recipe)return;
+        toast('辛苦啦，这道菜已经完成。');
+        openRecipe(currentRecipe,currentRecipeData||recipe);
+        window.scrollTo({left:0,top:0,behavior:'smooth'});
+      };
+      window.finishCooking=async function(){
+        const recipe=getRecipe(currentRecipe);
+        if(!recipe)return;
+        if(!userSession.authenticated){
+          syncCookingSaveState();
+          toast('登录后才能保存烹饪记录哦。');
+          return;
+        }
+        const button=cookingSaveButton();
+        if(button){
+          button.disabled=true;
+          button.textContent='保存中...';
+        }
+        try{
+          await userApi('/cooking-records',{method:'POST',body:JSON.stringify({recipe_id:recipe.id})});
+          cookingRecords=[...cookingRecords,{recipeId:recipe.id,finishedAt:new Date().toISOString()}];
+          storage.write('cute-cooking-records',cookingRecords);
+          toast('已保存到你的烹饪记录。');
+          openRecipe(currentRecipe,currentRecipeData||recipe);
+          window.scrollTo({left:0,top:0,behavior:'smooth'});
+        }catch(error){
+          toast(error.message||'保存失败，请稍后再试。');
+        }finally{
+          if(button){
+            button.textContent='保存烹饪记录';
+            syncCookingSaveState();
+          }
+        }
+      };
+      const previousRenderUserAccount=window.renderUserAccount;
+      window.renderUserAccount=function(){
+        previousRenderUserAccount?.();
+        syncCookingSaveState();
+      };
+      const previousGo=window.go;
+      window.go=function(view){
+        previousGo(view);
+        window.scrollTo({left:0,top:0,behavior:'smooth'});
+        if(view==='cooking')syncCookingSaveState();
+      };
+      syncCookingSaveState();
     })();
   </script>
 </body>
