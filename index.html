@@ -64,7 +64,7 @@
         <div class="section"><div class="section-head"><div><h2>今日推荐</h2><p class="muted">三位新鲜出炉的小主角。</p></div><button class="mini-link" onclick="go('recipes')">逛逛菜谱乐园</button></div><div class="recipe-grid" id="homeRecipes"></div></div>
       </section>
 
-      <section class="view" id="ingredients"><div class="page-top"><div><p class="eyebrow">🥣 食材小厨房</p><h1>把食材放进小锅里吧！</h1><p class="muted">最多选择 5 种主角食材，小锅会帮你找搭配。</p></div><div class="counter" id="counter">已选 0 / 5</div></div><div class="ingredient-layout"><div class="card"><input id="search" class="search" placeholder="找找你手上有什么食材……" oninput="renderIngredients()"><div class="category-row" id="categories"></div><div class="ingredient-list" id="ingredientList"></div></div><div class="card pot-panel"><div class="pot-wrap"><div class="steam">⌁⌁</div><div class="bubble b1"></div><div class="bubble b2"></div><div class="pot-lid"></div><div class="pot" id="potFace">•ᴗ•</div></div><div class="pot-ingredients" id="potIngredients"><p class="empty-pot">小锅正期待食材跳进来～</p></div><p class="pot-tip" id="potTip">把食材交给我吧！</p><button class="pill peach full-btn" onclick="goResults()">就用这些做菜 ✦</button></div></div></section>
+      <section class="view" id="ingredients"><div class="page-top"><div><p class="eyebrow">🥣 食材小厨房</p><h1>把食材放进小锅里吧！</h1><p class="muted">最多选择 5 种主角食材，小锅会帮你找搭配。</p></div><div class="counter" id="counter">已选 0 / 5</div></div><div class="ingredient-layout"><div class="card"><input id="search" class="search" placeholder="找找你手上有什么食材……" oninput="searchIngredients()"><div class="category-row" id="categories"></div><div class="ingredient-list" id="ingredientList"></div><div class="ingredient-pagination" id="ingredientPagination"></div></div><div class="card pot-panel"><div class="pot-wrap"><div class="steam">⌁⌁</div><div class="bubble b1"></div><div class="bubble b2"></div><div class="pot-lid"></div><div class="pot" id="potFace">•ᴗ•</div></div><div class="pot-ingredients" id="potIngredients"><p class="empty-pot">小锅正期待食材跳进来～</p></div><p class="pot-tip" id="potTip">把食材交给我吧！</p><button class="pill peach full-btn" onclick="goResults()">就用这些做菜 ✦</button></div></div></section>
 
       <section class="view" id="recipes"><div class="page-top"><div><p class="eyebrow">🍽 菜谱乐园</p><h1>来菜谱乐园逛逛吧！</h1><p class="muted">每一道菜都是小锅画出来的可爱样子。</p></div></div><div class="recipe-search-row"><label class="recipe-search" for="recipeBrowseSearch"><span aria-hidden="true">⌕</span><input id="recipeBrowseSearch" type="search" placeholder="搜索菜名、食材或标签" oninput="searchRecipes()"><button type="button" class="recipe-search-clear" aria-label="清空搜索" title="清空搜索" onclick="clearRecipeSearch()">×</button></label></div><div class="filters" id="filters"></div><div class="recipe-grid" id="recipeGrid"></div><div class="recipe-pagination" id="recipePagination"></div></section>
       <section class="view" id="results"><div class="page-top"><div><p class="eyebrow">✨ 小锅的结果单</p><h1>小锅找到这些好吃的！</h1><p class="muted" id="resultSub">按照你的小锅食材配出来啦。</p></div><button class="pill" onclick="go('ingredients')">&lt; 再选一点</button></div><div class="result-note">🍲 这些食材已经可以做好吃的啦！还可以继续加，也可以马上开做。</div><div class="recipe-grid" id="resultGrid"></div></section>
@@ -118,13 +118,13 @@
       write(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}}
     };
     let selected=Array.isArray(storage.read('cute-selected',[]))?storage.read('cute-selected',[]):[];
-    let activeCat='全部';let currentRecipe='tomato-egg';let currentRecipeData=null;
+    let activeCat='全部';let ingredientPage=1;let currentRecipe='tomato-egg';let currentRecipeData=null;
     let favorites=[];
     let cookingRecords=Array.isArray(storage.read('cute-cooking-records',[]))?storage.read('cute-cooking-records',[]):[];
     let resultRecipes=[];let randomRecipe=null;let randomSpinning=false;let wheelRotation=0;let randomSpinToken=0;let catalogueReady=false;
     const cardGame={status:'idle',dealt:[],selected:[],revealed:[],chosen:null,recentDeal:-1,revealing:-1,session:0};
     const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
-    function go(view){if($('#random').classList.contains('active')&&view!=='random')resetRandomExperience();$$('.view').forEach(v=>v.classList.toggle('active',v.id===view));$$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));window.scrollTo({top:0,behavior:'smooth'});if(view==='recipes')renderRecipes();if(view==='favorites')renderFavorites()}
+    function go(view){if($('#random').classList.contains('active')&&view!=='random')resetRandomExperience();$$('.view').forEach(v=>v.classList.toggle('active',v.id===view));$$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));window.scrollTo({top:0,behavior:'smooth'});if(view==='ingredients')renderIngredients();if(view==='recipes')renderRecipes();if(view==='favorites')renderFavorites()}
     $$('#nav .nav-btn').forEach(b=>b.onclick=()=>go(b.dataset.view));
     function toast(message){const t=$('#toast');t.textContent=message;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2500)}
     function recipeArt(r){const icons=(r.ingredients||[]).map(item=>typeof item==='string'?foods.find(food=>food.name===item)?.icon:item?.icon).filter(Boolean);return icons.length?icons.join(''):r.art}
@@ -134,13 +134,15 @@
     function canAddIngredient(id){return selected.length===0||matchingRecipes([...selected,id]).length>0}
     function showIncompatible(id){const candidate=foods.find(f=>f.id===id);const chosen=selected.map(currentId=>foods.find(f=>f.id===currentId)?.name).filter(Boolean).join('、');toast(`🥣 小锅悄悄摇摇头：${chosen} 和 ${candidate.name} 暂时搭不成一道菜，换一位食材朋友吧～`)}
     function pruneSelectedIngredients(){const available=new Set(foods.map(food=>food.id));const next=[...new Set(selected)].filter(id=>available.has(id));const removed=next.length!==selected.length;selected=next;if(removed)storage.write('cute-selected',selected);return removed}
-    function renderIngredients(resetScroll=false){pruneSelectedIngredients();const q=$('#search').value.trim();const cats=['全部',...new Set(foods.map(f=>f.cat))];$('#categories').innerHTML=cats.map(c=>`<button class="category ${c===activeCat?'active':''}" onclick="setCat('${c}')">${c}</button>`).join('');const list=foods.filter(f=>(activeCat==='全部'||f.cat===activeCat)&&(!q||f.name.includes(q))).map((f,index)=>{const isSelected=selected.includes(f.id);const isBlocked=!isSelected&&selected.length>0&&!canAddIngredient(f.id);return {f,index,isSelected,isBlocked}}).sort((a,b)=>(a.isSelected?0:a.isBlocked?2:1)-(b.isSelected?0:b.isBlocked?2:1)||a.index-b.index).map(({f,isSelected,isBlocked})=>{const action=isBlocked?`showIncompatible('${f.id}')`:`toggleIngredient('${f.id}')`;const status=isSelected?'开心跳进锅里':isBlocked?'暂时搭不上哦':'等你选我';return `<button class="ingredient ${isSelected?'on':''} ${isBlocked?'is-blocked':''}" onclick="${action}" data-blocked="${isBlocked}"><span class="food-icon">${f.icon}</span><b>${f.name}</b><small>${f.cat} · ${status}</small><i class="check">✓</i>${isBlocked?'<i class="block-mark">×</i>':''}</button>`}).join('');const ingredientList=$('#ingredientList');ingredientList.innerHTML=list||'<p class="muted">小食材躲起来了，换个关键词找找看。</p>';if(resetScroll)ingredientList.scrollTop=0;renderPot()}
-    function setCat(cat){activeCat=cat;renderIngredients()}
-    function toggleIngredient(id){if(selected.includes(id)){selected=selected.filter(x=>x!==id);toast('这位小伙伴先回到队伍里啦。')}else if(selected.length>=5){toast('小锅已经装不下啦，最多选 5 种哦！');return}else{selected.push(id);toast('咻！食材跳进小锅啦！')}storage.write('cute-selected',selected);renderIngredients(true)}
-    function renderPot(){pruneSelectedIngredients();const fs=selected.map(id=>foods.find(f=>f.id===id)).filter(Boolean);$('#counter').textContent=`已选 ${fs.length} / 5`;$('#potIngredients').innerHTML=fs.length?fs.map(f=>`<button type="button" class="pot-food-card" title="移除 ${f.name}" onclick="toggleIngredient('${f.id}')"><span class="pot-food-icon">${f.icon}</span><b>${f.name}</b><span class="pot-food-remove" aria-hidden="true">×</span></button>`).join(''):'<p class="empty-pot">小锅正期待食材跳进来～</p>';const face=fs.length===0?'•ᴗ•':fs.length<2?'•⌣•':fs.length<4?'✦ᴗ✦':'˶ᵔ ᵕ ᵔ˶';$('#potFace').textContent=face;$('#potTip').textContent=fs.length===0?'把食材交给我吧！':fs.length<3?'再选一两种也可以哦。':'这些食材已经能做好吃的啦！'}
+    function renderIngredientPagination(totalPages){const host=$('#ingredientPagination');if(!host)return;if(totalPages<=1){host.innerHTML='';return}const pageItems=recipePageItems(totalPages,ingredientPage);host.innerHTML=`<button class="recipe-page-button" type="button" aria-label="上一页" title="上一页" onclick="setIngredientPage(${ingredientPage-1})" ${ingredientPage===1?'disabled':''}>&lt;</button>${pageItems.map(item=>item==='…'?'<span class="recipe-page-ellipsis">…</span>':`<button class="recipe-page-button ${item===ingredientPage?'active':''}" type="button" aria-label="第 ${item} 页" onclick="setIngredientPage(${item})">${item}</button>`).join('')}<button class="recipe-page-button" type="button" aria-label="下一页" title="下一页" onclick="setIngredientPage(${ingredientPage+1})" ${ingredientPage===totalPages?'disabled':''}>&gt;</button>`}
+    function renderIngredients(){pruneSelectedIngredients();const q=$('#search').value.trim();const cats=['全部',...new Set(foods.map(f=>f.cat))];$('#categories').innerHTML=cats.map(c=>`<button class="category ${c===activeCat?'active':''}" onclick="setCat('${c}')">${c}</button>`).join('');const list=foods.filter(f=>(activeCat==='全部'||f.cat===activeCat)&&(!q||f.name.includes(q)));const totalPages=Math.max(1,Math.ceil(list.length/INGREDIENTS_PER_PAGE));ingredientPage=Math.min(Math.max(1,ingredientPage),totalPages);const pageItems=list.slice((ingredientPage-1)*INGREDIENTS_PER_PAGE,ingredientPage*INGREDIENTS_PER_PAGE).map(({id,name,cat,icon})=>{const isSelected=selected.includes(id);const isBlocked=!isSelected&&selected.length>0&&!canAddIngredient(id);const action=isBlocked?`showIncompatible('${id}')`:`toggleIngredient('${id}')`;const status=isSelected?'开心跳进锅里':isBlocked?'暂时搭不上哦':'等你选我';return `<button class="ingredient ${isSelected?'on':''} ${isBlocked?'is-blocked':''}" onclick="${action}" data-blocked="${isBlocked}"><span class="food-icon">${icon}</span><b>${name}</b><small>${cat} · ${status}</small><i class="check">✓</i>${isBlocked?'<i class="block-mark">×</i>':''}</button>`});const ingredientList=$('#ingredientList');ingredientList.innerHTML=pageItems.length?pageItems.join(''):'<p class="muted">小食材躲起来了，换个关键词找找看。</p>';renderIngredientPagination(totalPages);renderPot()}
+    function setCat(cat){activeCat=cat;ingredientPage=1;renderIngredients()}
+    function searchIngredients(){ingredientPage=1;renderIngredients()}
+    function setIngredientPage(page){const q=$('#search').value.trim();const list=foods.filter(f=>(activeCat==='全部'||f.cat===activeCat)&&(!q||f.name.includes(q)));const totalPages=Math.max(1,Math.ceil(list.length/INGREDIENTS_PER_PAGE));ingredientPage=Math.min(Math.max(1,Number(page)||1),totalPages);renderIngredients();document.querySelector('#ingredients')?.scrollIntoView({block:'start',behavior:'smooth'})}
+    function toggleIngredient(id){if(selected.includes(id)){selected=selected.filter(x=>x!==id);toast('这位小伙伴先回到队伍里啦。')}else if(selected.length>=5){toast('小锅已经装不下啦，最多选 5 种哦！');return}else{selected.push(id);toast('咻！食材跳进小锅啦！')}storage.write('cute-selected',selected);renderIngredients()}function renderPot(){pruneSelectedIngredients();const fs=selected.map(id=>foods.find(f=>f.id===id)).filter(Boolean);$('#counter').textContent=`已选 ${fs.length} / 5`;$('#potIngredients').innerHTML=fs.length?fs.map(f=>`<button type="button" class="pot-food-card" title="移除 ${f.name}" onclick="toggleIngredient('${f.id}')"><span class="pot-food-icon">${f.icon}</span><b>${f.name}</b><span class="pot-food-remove" aria-hidden="true">×</span></button>`).join(''):'<p class="empty-pot">小锅正期待食材跳进来～</p>';const face=fs.length===0?'•ᴗ•':fs.length<2?'•⌣•':fs.length<4?'✦ᴗ✦':'˶ᵔ ᵕ ᵔ˶';$('#potFace').textContent=face;$('#potTip').textContent=fs.length===0?'把食材交给我吧！':fs.length<3?'再选一两种也可以哦。':'这些食材已经能做好吃的啦！'}
     function getRecipe(id){return currentRecipeData?.id===id?currentRecipeData:recipes.find(r=>r.id===id)||resultRecipes.find(r=>r.id===id)}
     function goResults(){if(!selected.length){toast('先给小锅一位食材朋友吧！');return}const selectedFoods=selected.map(id=>foods.find(f=>f.id===id)).filter(Boolean);const names=selectedFoods.map(f=>f.name);resultRecipes=matchingRecipes(selected).slice(0,6);const grid=$('#resultGrid');grid.classList.toggle('single-result',resultRecipes.length===1);$('#resultSub').textContent=`小锅只保留了同时包含 ${names.join('、')} 的菜谱。`;grid.innerHTML=resultRecipes.length?resultRecipes.map(recipe=>recipeCard(recipe,names)).join(''):'<div class="card" style="grid-column:1/-1;text-align:center;padding:55px"><div style="font-size:70px">🍲</div><h2>这组食材还没凑成菜哦</h2><p class="muted">回到小厨房换一位小伙伴试试看吧～</p><button class="pill primary" onclick="go(\'ingredients\')">回到小厨房</button></div>';go('results')}
-    const RECIPES_PER_PAGE=6;let filter='全部',recipeBrowsePage=1;
+    const INGREDIENTS_PER_PAGE=8;const RECIPES_PER_PAGE=6;let filter='全部',recipeBrowsePage=1;
     function recipeMatchesFilter(recipe){return filter==='全部'||recipe.tags.includes(filter)||(filter==='新手'&&recipe.diff==='新手')||(filter==='高蛋白'&&recipe.tags.includes('高蛋白'))}
     function recipeMatchesSearch(recipe,query){if(!query)return true;return [recipe.name,recipe.desc,recipe.diff,recipe.time,...recipe.ingredients,...recipe.tags].join(' ').toLocaleLowerCase().includes(query)}
     function recipePageItems(totalPages,currentPage){const pages=[1,currentPage-1,currentPage,currentPage+1,totalPages].filter(page=>page>=1&&page<=totalPages).filter((page,index,list)=>list.indexOf(page)===index).sort((a,b)=>a-b);return pages.flatMap((page,index)=>index&&page-pages[index-1]>1?['…',page]:[page])}
@@ -173,6 +175,7 @@
     const mobileMyButton=document.querySelector('.mobile-tabs button:last-child');if(mobileMyButton)mobileMyButton.onclick=showMyKitchen;renderThemeToggle();renderHome();renderIngredients();renderRecipes();resetRandomExperience();hydrateCatalogue();hydrateUserAuth();
   </script>
   <script>
+    var esc=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
     function normalizeSeasoningItems(recipe){
       const raw=Array.isArray(recipe?.seasonings)&&recipe.seasonings.length?recipe.seasonings:[];
       const fallback=[{name:'食用油',icon:'🫗'},{name:'盐',icon:'🧂'},{name:'生抽',icon:'🍶'}];
@@ -254,6 +257,92 @@
     syncSeasoningDataFromApi();
     if(currentRecipeData)currentRecipeData={...currentRecipeData,seasonings:normalizeSeasoningItems(currentRecipeData)};
     if($('#detail').classList.contains('active')&&currentRecipe){openRecipe(currentRecipe,currentRecipeData||getRecipe(currentRecipe));}
+  </script>
+  <script>
+    (function(){
+      const htmlEscape=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+      const defaultSeasonings=[{name:'食用油',icon:'🫙'},{name:'盐',icon:'🧂'},{name:'生抽',icon:'🥣'}];
+      function safeSteps(recipe){
+        const steps=Array.isArray(recipe?.steps)?recipe.steps.filter(Boolean):[];
+        return steps.length?steps:['准备并清洗食材。','热锅下油，放入食材翻炒或炖煮。','调味后试味，熟透即可出锅。'];
+      }
+      function safeSeasonings(recipe){
+        const raw=Array.isArray(recipe?.seasonings)&&recipe.seasonings.length?recipe.seasonings:defaultSeasonings;
+        const seen=new Set();
+        return raw.map(item=>({name:String(item?.name||'').trim(),icon:String(item?.icon||'🧂').trim()||'🧂'})).filter(item=>item.name&&!seen.has(item.name)&&seen.add(item.name));
+      }
+      function safeRecipe(recipe){
+        if(!recipe)return null;
+        return {
+          ...recipe,
+          desc:recipe.desc||recipe.description||'小锅暂时还没写介绍，但做起来一样香。',
+          time:recipe.time||`${recipe.minutes||15} 分钟`,
+          diff:recipe.diff||recipe.difficulty||'新手',
+          cal:recipe.cal||recipe.calories||'约 300 kcal',
+          tags:Array.isArray(recipe.tags)?recipe.tags:[],
+          ingredients:Array.isArray(recipe.ingredients)?recipe.ingredients:[],
+          steps:safeSteps(recipe),
+          seasonings:safeSeasonings(recipe)
+        };
+      }
+      function seasoningHtml(recipe){
+        return safeSeasonings(recipe).map(item=>`<span class="food-chip">${htmlEscape(item.icon)} ${htmlEscape(item.name)}</span>`).join('');
+      }
+      function ensureDetailSeasonings(){
+        if($('#detailSeasonings'))return;
+        const ingredientLine=$('#detailIngredients');
+        if(!ingredientLine)return;
+        const title=document.createElement('h3');
+        title.textContent='调味料小队';
+        title.style.marginTop='16px';
+        const line=document.createElement('div');
+        line.className='ingredients-line';
+        line.id='detailSeasonings';
+        ingredientLine.insertAdjacentElement('afterend',line);
+        line.insertAdjacentElement('beforebegin',title);
+      }
+      function ensureCookSeasonings(){
+        if($('#cookSeasonings'))return;
+        const head=document.querySelector('.cooking-guide-head');
+        if(!head)return;
+        const card=document.createElement('div');
+        card.className='card info-card';
+        card.style.margin='14px 0 18px';
+        card.style.padding='14px 16px';
+        card.innerHTML='<h3 style="margin-bottom:10px">调味料小队</h3><div class="ingredients-line" id="cookSeasonings"></div>';
+        head.insertAdjacentElement('afterend',card);
+      }
+      window.openRecipe=function(id,recipe){
+        const next=safeRecipe(recipe||getRecipe(id));
+        if(!next){toast('小锅暂时找不到这道菜，再试一次吧！');return}
+        currentRecipe=id;
+        currentRecipeData=next;
+        ensureDetailSeasonings();
+        $('#detailArt').textContent=recipeArt(next);
+        $('#detailName').textContent=next.name;
+        $('#detailDesc').textContent=next.desc;
+        $('#detailStats').innerHTML=`<span>⏱ ${next.time}</span><span>✦ ${next.diff}</span><span>◉ ${next.cal}</span><span>👤 1-2 人</span>`;
+        $('#detailIngredients').innerHTML=next.ingredients.map(name=>{const food=foods.find(item=>item.name===name);return `<span class="food-chip">${htmlEscape(food?.icon||'🍴')} ${htmlEscape(name)}</span>`}).join('');
+        $('#detailSeasonings').innerHTML=seasoningHtml(next);
+        $('#detailSteps').innerHTML=next.steps.map(step=>`<li>${htmlEscape(step)}</li>`).join('');
+        $('#detailFav').style.display=next.generated?'none':'';
+        $('#detailFav').textContent=favorites.includes(id)?'♥ 已收藏':'♡ 收藏这道菜';
+        setServings(1);
+        go('detail');
+      };
+      window.renderCookingGuide=function(recipe){
+        const next=safeRecipe(recipe);
+        if(!next)return;
+        ensureCookSeasonings();
+        $('#cookTitle').textContent=next.name;
+        $('#cookSeasonings').innerHTML=seasoningHtml(next);
+        $('#cookSteps').innerHTML=cookingGuide(next).map((step,index)=>`<article class="guide-card"><span class="guide-number">${index+1}</span><h3>${htmlEscape(step.title)}</h3><div class="guide-meta"><span>⏱ ${htmlEscape(step.time)}</span><span>🔥 ${htmlEscape(step.heat)}</span></div><p>${htmlEscape(step.detail)}</p></article>`).join('');
+      };
+      window.quickCook=function(id){
+        openRecipe(id);
+        setTimeout(startCooking,80);
+      };
+    })();
   </script>
 </body>
 </html>

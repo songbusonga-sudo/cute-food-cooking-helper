@@ -1,0 +1,29 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "headers": [
+    {
+      "source": "/config.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://cute-food-cooking-helper-production.up.railway.app/api/:path*"
+    },
+    {
+      "source": "/admin",
+      "destination": "https://cute-food-cooking-helper-production.up.railway.app/admin"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "https://cute-food-cooking-helper-production.up.railway.app/admin/:path*"
+    }
+  ]
+}
