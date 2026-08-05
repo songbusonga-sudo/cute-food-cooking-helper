@@ -1,0 +1,35 @@
+# Cute Food Cooking Helper
+
+一个可爱的「今天吃什么」做饭决策小助手。用户可以选择已有食材，查看菜谱推荐，随机抽取今天吃什么，收藏喜欢的菜谱，并记录烹饪历史。
+
+## 在线访问
+
+- 网站：https://mizkjfood.asia
+
+## 主要功能
+
+- 食材选择
+- 菜谱推荐
+- 随机今日菜单
+- 用户登录和注册
+- 收藏菜谱
+- 烹饪记录
+- 管理员后台
+- Excel 菜谱导入导出
+
+## 技术栈
+
+- 前端：HTML、CSS、JavaScript
+- 后端：Python、Flask
+- 数据库：MySQL
+- 部署：Vercel、Railway
+- Excel：openpyxl
+
+## 本地运行
+
+安装 Python 依赖：
+
+```bash
+python -m pip install -r requirements.txt
+
+##一个圈外人用codex搓出来的完全只是为了了解github等各种神奇小网站的产物，如果一年后我还对这方面感兴趣那个时候我会成长多少呢
