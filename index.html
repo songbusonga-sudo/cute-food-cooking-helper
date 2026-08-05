@@ -43,6 +43,7 @@
     @media(max-width:900px){nav{display:none}.entry-grid,.recipe-grid{grid-template-columns:repeat(2,1fr)}.topic-grid{grid-template-columns:repeat(3,1fr)}.ingredient-layout{grid-template-columns:1fr 1fr}.pot-panel{position:relative;top:auto;grid-column:auto;min-height:330px}.recommend-panel{min-height:auto}.fridge-note{grid-template-columns:105px 1fr}.fridge-note .pill{grid-column:span 2;justify-self:start}.detail-layout,.random-layout{grid-template-columns:1fr}}
     @media(max-width:600px){header{height:62px;padding:0 16px}.brand{font-size:17px}.utility .icon-btn:not(.avatar){display:none}main{padding:20px 15px 88px}.hero{min-height:430px;padding:35px 25px;border-radius:26px}.hero-copy{max-width:85%}.hero-copy p{font-size:15px}.f1{right:7%;top:10%}.f2{right:6%;bottom:9%}.f3{right:32%;bottom:5%}.f4{display:none}.entry-grid,.recipe-grid,.topic-grid,.choice-grid{grid-template-columns:1fr}.section{margin-top:31px}.entry-card{min-height:160px}.entry-card .art{font-size:54px}.fridge-note{grid-template-columns:78px 1fr;padding:14px}.fridge-art{height:78px;font-size:53px}.page-top{align-items:start;flex-direction:column;gap:8px}.recipe-search-row{justify-content:stretch}.recipe-search{width:100%}.recipe-pagination{gap:5px}.recipe-page-button{min-width:34px}.ingredient-layout{grid-template-columns:1fr}.pot-panel{grid-column:auto;min-height:355px}.ingredient-list{max-height:none}.detail-art{min-height:230px;font-size:125px}.fridge-shell{grid-template-columns:1fr}.mobile-tabs{position:fixed;z-index:20;display:flex;justify-content:space-around;align-items:center;bottom:0;left:0;right:0;height:67px;background:rgba(255,253,247,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line)}.mobile-tabs button{background:transparent;font-size:11px;color:#7b6d61;font-weight:800}.mobile-tabs span{display:block;font-size:20px}.cook-stage{min-height:205px}.cooking-shell{padding:20px 14px}.wheel-zone{min-height:350px}}
     @media(max-width:600px){.guide-steps{grid-template-columns:1fr}.guide-card{min-height:0}}
+    @media(max-width:600px){#recipeGrid{touch-action:pan-y}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
     @media(max-width:900px){.card-game{grid-template-columns:1fr}.card-deck-zone{min-height:250px}.card-deck{margin-bottom:16px}.food-card-grid{grid-template-columns:repeat(5,minmax(105px,1fr));overflow-x:auto;padding:8px 5px 13px}.food-card{min-height:218px}}
     @media(max-width:600px){.card-game{gap:15px}.card-deck-zone,.card-play-zone{border-radius:24px;padding:18px}.card-deck-zone{min-height:220px}.card-deck{transform:scale(.8);margin:-15px 0 4px}.card-deck-zone h2,.card-game-head h2{font-size:21px}.card-game-head{align-items:flex-start;flex-direction:column}.food-card-grid{grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible;min-height:0}.food-card{min-height:220px}.card-game-actions{justify-content:stretch}.card-game-actions .pill{flex:1;padding:10px 9px}}
@@ -396,6 +397,75 @@
         setTimeout(startCooking,80);
       };
       ensureCookingBackButton();
+    })();
+  </script>
+  <script>
+    (function(){
+      const MOBILE_RECIPE_QUERY='(max-width:600px)';
+      const DESKTOP_RECIPE_PAGE_SIZE=6;
+      let recipeResizeTimer=0;
+      let recipeSwipeStart=null;
+      function isMobileRecipeBrowse(){
+        return window.matchMedia&&window.matchMedia(MOBILE_RECIPE_QUERY).matches;
+      }
+      function recipeBrowsePageSize(){
+        return isMobileRecipeBrowse()?1:DESKTOP_RECIPE_PAGE_SIZE;
+      }
+      function filteredBrowseRecipes(){
+        const query=($('#recipeBrowseSearch')?.value||'').trim().toLocaleLowerCase();
+        return recipes.filter(recipe=>recipeMatchesFilter(recipe)&&recipeMatchesSearch(recipe,query));
+      }
+      function clampRecipeBrowsePage(page,totalPages){
+        return Math.min(Math.max(1,Number(page)||1),totalPages);
+      }
+      window.renderRecipes=function(){
+        const tags=['\u5168\u90e8','\u5feb\u624b','\u6e05\u6de1','\u5e26\u996d','\u9ad8\u86cb\u767d','\u65b0\u624b'];
+        const filters=$('#filters');
+        const grid=$('#recipeGrid');
+        if(!filters||!grid)return;
+        filters.innerHTML=tags.map(t=>`<button class="pill ${filter===t?'selected':''}" onclick="setFilter('${t}')">${t==='\u5168\u90e8'?'&#127869; ':''}${t}</button>`).join('');
+        const list=filteredBrowseRecipes();
+        const pageSize=recipeBrowsePageSize();
+        const totalPages=Math.max(1,Math.ceil(list.length/pageSize));
+        recipeBrowsePage=Math.min(recipeBrowsePage,totalPages);
+        const start=(recipeBrowsePage-1)*pageSize;
+        const pageRecipes=list.slice(start,start+pageSize);
+        grid.innerHTML=pageRecipes.length?pageRecipes.map(recipe=>recipeCard(recipe)).join(''):'<div class="card" style="grid-column:1/-1;text-align:center;padding:48px"><h2>&#27809;&#26377;&#25214;&#21040;&#36825;&#36947;&#33756;</h2><p class="muted">&#25442;&#20010;&#33756;&#21517;&#12289;&#39135;&#26448;&#25110;&#26631;&#31614;&#35797;&#35797;&#30475;&#12290;</p></div>';
+        renderRecipePagination(totalPages);
+      };
+      window.setRecipePage=function(page,options={}){
+        const totalPages=Math.max(1,Math.ceil(filteredBrowseRecipes().length/recipeBrowsePageSize()));
+        recipeBrowsePage=clampRecipeBrowsePage(page,totalPages);
+        renderRecipes();
+        if(!options.preserveScroll)document.querySelector('#recipes')?.scrollIntoView({block:'start',behavior:'smooth'});
+      };
+      function bindRecipeSwipe(){
+        const grid=$('#recipeGrid');
+        if(!grid||grid.dataset.swipeReady)return;
+        grid.dataset.swipeReady='true';
+        grid.addEventListener('touchstart',event=>{
+          if(!isMobileRecipeBrowse()||!$('#recipes')?.classList.contains('active'))return;
+          const touch=event.changedTouches[0];
+          recipeSwipeStart={x:touch.clientX,y:touch.clientY,time:Date.now()};
+        },{passive:true});
+        grid.addEventListener('touchend',event=>{
+          if(!recipeSwipeStart||!isMobileRecipeBrowse()||!$('#recipes')?.classList.contains('active'))return;
+          const touch=event.changedTouches[0];
+          const dx=touch.clientX-recipeSwipeStart.x;
+          const dy=touch.clientY-recipeSwipeStart.y;
+          const elapsed=Date.now()-recipeSwipeStart.time;
+          recipeSwipeStart=null;
+          if(Math.abs(dx)<50||Math.abs(dx)<Math.abs(dy)*1.35||elapsed>900)return;
+          setRecipePage(recipeBrowsePage+(dx<0?1:-1),{preserveScroll:true});
+        },{passive:true});
+      }
+      window.addEventListener('resize',()=>{
+        if(!$('#recipes')?.classList.contains('active'))return;
+        window.clearTimeout(recipeResizeTimer);
+        recipeResizeTimer=window.setTimeout(renderRecipes,120);
+      },{passive:true});
+      bindRecipeSwipe();
+      renderRecipes();
     })();
   </script>
 </body>
