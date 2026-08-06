@@ -783,6 +783,8 @@ def create_app():
             return json_error("注册没有完成，请换一个账号后再试", 409)
         cursor.close()
         connection.close()
+        session.pop("admin_id", None)
+        session.pop("admin_username", None)
         session["user_id"] = account_id
         session["user_username"] = username
         return jsonify({"authenticated": True, "username": username}), 201
@@ -812,6 +814,8 @@ def create_app():
         record_user_auth_event(connection, account["id"], "login")
         connection.commit()
         connection.close()
+        session.pop("admin_id", None)
+        session.pop("admin_username", None)
         session["user_id"] = account["id"]
         session["user_username"] = account["external_key"]
         return jsonify({"authenticated": True, "username": account["external_key"]})
@@ -827,6 +831,42 @@ def create_app():
         session.pop("user_id", None)
         session.pop("user_username", None)
         return "", 204
+
+    @app.route("/api/user-auth/password", methods=["POST"])
+    def user_auth_password():
+        account_id = current_user_id()
+        if not account_id:
+            return json_error("请先登录后再修改密码", 401)
+        payload = request.get_json(silent=True) or {}
+        current_password = payload.get("current_password", "")
+        new_password = payload.get("new_password", "")
+        if not isinstance(new_password, str) or len(new_password) < 6 or len(new_password) > 72:
+            return json_error("新密码需要 6-72 位")
+        connection = connect()
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT password_hash, role, is_active FROM users WHERE id=%s",
+            (account_id,),
+        )
+        account = cursor.fetchone()
+        if (
+            not account
+            or not account["is_active"]
+            or account["role"] != "user"
+            or not account["password_hash"]
+            or not check_password_hash(account["password_hash"], current_password)
+        ):
+            cursor.close()
+            connection.close()
+            return json_error("旧密码不正确", 401)
+        cursor.execute(
+            "UPDATE users SET password_hash=%s WHERE id=%s",
+            (generate_password_hash(new_password), account_id),
+        )
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return jsonify({"updated": True})
 
     @app.route("/api/auth/password", methods=["POST"])
     @admin_required

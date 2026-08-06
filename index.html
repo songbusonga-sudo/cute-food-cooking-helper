@@ -10,7 +10,7 @@
   <style>
     :root{color-scheme:light;--ink:#2f332f;--muted:#6d746d;--cream:#f7f5ef;--paper:#fffdfa;--panel:#f0f3ec;--soft:#e8eee5;--green:#477a62;--green-deep:#2f5d49;--green-soft:#e6efe8;--peach:#d98b68;--warm:#efe4d2;--line:#ddd8cc;--shadow:0 12px 28px rgba(49,52,46,.1);--font-sans:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC","Microsoft YaHei",sans-serif}
     :root[data-theme="dark"]{color-scheme:dark;--ink:#ecebe5;--muted:#b8b9b1;--cream:#171a17;--paper:#22261f;--panel:#1d211c;--soft:#2b3229;--green:#8ab59b;--green-deep:#b8d7c2;--green-soft:#26352c;--peach:#d59a7b;--warm:#332d24;--line:#3b4038;--shadow:0 16px 32px rgba(0,0,0,.34)}
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent} body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.55 var(--font-sans);letter-spacing:0}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}.hidden{display:none!important} body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.55 var(--font-sans);letter-spacing:0}
     button,input{font:inherit} button{border:0;cursor:pointer;color:inherit;outline:0;user-select:none;-webkit-touch-callout:none} button:focus-visible{outline:3px solid rgba(63,138,112,.26);outline-offset:3px} button:active{transform:scale(.96)}button:disabled{cursor:wait;opacity:.62;transform:none}
     .app{min-height:100vh;overflow:hidden;background:var(--cream)}
     header{height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 max(4vw,24px);position:sticky;top:0;z-index:15;background:color-mix(in srgb,var(--cream) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
@@ -54,20 +54,24 @@
     @media(max-width:600px){.utility .icon-btn.theme-toggle{display:block}}
     @media(min-width:901px){body.detail-page-active{overflow:hidden}body.detail-page-active .app{height:100vh;overflow:hidden}body.detail-page-active main{height:calc(100vh - 74px);padding-top:18px;padding-bottom:18px;overflow:hidden}body.detail-page-active #detail.active{height:100%;overflow:hidden}body.detail-page-active #detail>.mini-link{display:inline-block;margin-bottom:8px;font-size:14px}body.detail-page-active #detail .detail-layout{height:calc(100% - 38px);margin-top:0!important;grid-template-columns:minmax(300px,.84fr) minmax(470px,1.16fr);gap:18px!important;align-items:stretch}body.detail-page-active #detail .detail-layout>div:last-child{min-height:0;display:grid;grid-template-rows:auto auto auto auto minmax(0,1fr) auto;align-content:start}body.detail-page-active #detail .detail-art{height:100%;min-height:0;font-size:clamp(92px,8vw,128px)}body.detail-page-active #detail .eyebrow{margin:0 0 3px;font-size:14px}body.detail-page-active #detail h1{font-size:clamp(34px,3.2vw,48px);line-height:1.02;margin-bottom:6px}body.detail-page-active #detail #detailDesc{margin-bottom:8px;font-size:14px;line-height:1.35}body.detail-page-active #detail .card{padding:12px 16px;border-radius:18px}body.detail-page-active #detail .info-card{margin-bottom:10px}body.detail-page-active #detail .stats{margin:0 0 8px;font-size:12px}body.detail-page-active #detail h3{font-size:16px;margin-bottom:6px}body.detail-page-active #detail .ingredients-line{gap:6px}body.detail-page-active #detail .food-chip{padding:5px 8px;font-size:12px}body.detail-page-active #detail .servings{margin:8px 0;gap:7px}body.detail-page-active #detail .servings .pill{padding:7px 15px}body.detail-page-active #detail #portionText{margin:0;font-size:13px;line-height:1.35}body.detail-page-active #detail .step-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0 0}body.detail-page-active #detail .step-list li{min-height:0;margin:0;padding:7px 9px 7px 36px;border-radius:11px;font-size:13px;line-height:1.32}body.detail-page-active #detail .step-list li:before{left:8px;top:7px;width:21px;height:21px;line-height:21px;font-size:13px}body.detail-page-active #detail .hero-actions{margin-top:8px;gap:8px}body.detail-page-active #detail .hero-actions .pill{padding:8px 15px;font-size:14px}}
     .avatar.is-admin{border-radius:999px;background:var(--green);color:#fff;font-size:12px;font-weight:900;padding:0 12px;width:auto;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .login-role-tabs{display:flex;gap:8px;margin:16px 0 4px}.login-role-tabs button{flex:1;border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:9px;font-weight:900;color:var(--muted)}.login-role-tabs button.active{border-color:var(--green);background:var(--green-soft);color:var(--green-deep)}.account-panel{display:grid;gap:12px;margin-top:16px}.account-panel.hidden{display:none}.account-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:13px;border:1px solid var(--line);border-radius:14px;background:var(--paper)}.account-row b,.account-row span{display:block}.account-row span{margin-top:2px;color:var(--muted);font-size:12px}.account-reset{grid-template-columns:1fr}.account-reset label{margin-top:0}.account-reset .pill{justify-self:start}.pill.danger{background:#d84c4c!important;border-color:#d84c4c!important;color:#fff!important}.user-auth-box.is-account .modal-art{font-size:48px}.user-auth-box.is-account .modal-actions{justify-content:space-between}.user-auth-box.is-account #userAuthLogout{min-width:118px}
+    :root[data-theme="dark"] .counter,:root[data-theme="dark"] .pill.yellow,:root[data-theme="dark"] .pill.selected,:root[data-theme="dark"] .daily-loading-message{background:#f3e4ad!important;border-color:#f3d98a!important;color:#183328!important}:root[data-theme="dark"] .card-meta span,:root[data-theme="dark"] .guide-meta span{background:#244636!important;color:#f5fff7!important}:root[data-theme="dark"] .guide-card p,:root[data-theme="dark"] .step-list li,:root[data-theme="dark"] .recipe-body p{color:#d7d5cd!important}:root[data-theme="dark"] .card-recipe-btn{background:#dff2e8!important;color:#214b39!important}:root[data-theme="dark"] .card-choose-btn{background:#e29a78!important;color:#fff!important}:root[data-theme="dark"] .account-row{background:#252a23}
+    .card-recipe-btn,.card-choose-btn{min-height:34px;display:flex;align-items:center;justify-content:center;line-height:1.15;white-space:normal;text-align:center}.card-recipe-btn{margin-top:auto}.card-choose-btn{margin-top:6px}.card-front{gap:6px}.card-front .card-art{margin-bottom:4px}.card-meta{margin-bottom:2px}
     #recipes.view.active{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,390px);column-gap:16px}
     #recipes .page-top,#recipes .recipe-swipe-hint,#recipes #recipeGrid,#recipes #recipePagination{grid-column:1/-1}
     #recipes .filters{grid-column:1;grid-row:2;align-self:center;margin:0 0 20px}
     #recipes .recipe-search-row{grid-column:2;grid-row:2;align-self:center;margin:0 0 20px}
     #recipes .recipe-search{width:100%}
     @media(max-width:700px){#recipes.view.active{display:block}#recipes .recipe-search-row{margin:0 0 12px}#recipes .filters{margin-bottom:20px}}
+    @media(max-width:600px){.food-card-grid{grid-template-columns:repeat(5,minmax(156px,1fr));gap:12px}.food-card{min-height:242px}.card-front{padding:13px 12px}.card-front h3{font-size:16px}.card-meta span{font-size:12px;padding:4px 7px}.card-recipe-btn,.card-choose-btn{font-size:13px;padding:8px 7px;border-radius:13px}.user-auth-box{max-height:min(92vh,760px);overflow:auto}.account-row{grid-template-columns:1fr}.account-row>.pill{justify-self:start}.login-role-tabs,.user-auth-tabs{gap:7px}.modal-actions{display:grid;grid-template-columns:1fr 1fr;width:100%}.modal-actions .pill{width:100%;padding-left:10px;padding-right:10px}.modal-actions .pill.danger{grid-column:1/-1;order:3}}
   </style>
 </head>
 <body>
   <div class="app">
     <header>
       <button class="brand" onclick="go('home')"><span class="brand-pot">•ᴗ•</span>今天吃什么呀</button>
-      <nav id="nav"><button class="nav-btn active" data-view="home">首页</button><button class="nav-btn" data-view="ingredients">食材小厨房</button><button class="nav-btn" data-view="random">今天吃什么</button><button class="nav-btn" data-view="recipes">菜谱乐园</button></nav>
-      <div class="utility"><button class="icon-btn" onclick="go('ingredients')" aria-label="搜索" title="搜索">⌕</button><button class="icon-btn" onclick="showFavorites()" aria-label="收藏" title="收藏">♡</button><button id="themeToggle" class="icon-btn theme-toggle" onclick="toggleTheme()" aria-label="切换深色模式" title="切换深色模式">◐</button><button class="icon-btn admin-btn" onclick="openAdminLogin()" aria-label="管理员登录" title="管理员登录">⚙</button><button id="userAccountButton" class="icon-btn avatar" onclick="openUserAuthModal()" aria-label="用户登录" title="登录或注册">👤</button></div>
+      <nav id="nav"><button class="nav-btn active" data-view="home">首页</button><button class="nav-btn" data-view="ingredients">食材小厨房</button><button class="nav-btn" data-view="random">今天吃什么</button><button class="nav-btn" data-view="recipes">菜谱乐园</button><button class="nav-btn" data-view="my">我的</button></nav>
+      <div class="utility"><button class="icon-btn" onclick="showFavorites()" aria-label="收藏" title="收藏">♡</button><button id="themeToggle" class="icon-btn theme-toggle" onclick="toggleTheme()" aria-label="切换深色模式" title="切换深色模式">◐</button><button id="userAccountButton" class="icon-btn avatar" onclick="openUserAuthModal()" aria-label="登录或账号管理" title="登录或账号管理">👤</button></div>
     </header>
     <main>
       <section class="view active" id="home">
@@ -88,7 +92,7 @@
       <section class="view" id="history"><div class="page-top"><div><p class="eyebrow">✦ 我的烹饪记录</p><h1>小锅记住了这些香香时刻</h1><p class="muted">只有登录账号后完成的烹饪，才会保存在这里。</p></div><div class="my-actions" aria-label="我的页面入口"><button class="pill active" onclick="showCookingHistory()">🍳 烹饪记录</button><button class="pill" onclick="showFavorites()">♡ 我的收藏</button><button class="pill" onclick="openUserAuthModal()">👤 账号管理</button></div></div><div class="history-list" id="historyList"></div></section>
     </main>
     <div class="mobile-tabs"><button onclick="go('home')"><span>🏠</span>首页</button><button onclick="go('ingredients')"><span>🥕</span>选食材</button><button onclick="go('random')"><span>🎲</span>随机</button><button onclick="go('recipes')"><span>🍽</span>菜谱</button><button onclick="showMyKitchen()"><span>♡</span>我的</button></div>
-  </div><div class="toast" id="toast"></div><div class="modal" id="adminLoginModal" role="dialog" aria-modal="true" aria-labelledby="adminLoginTitle"><form class="modal-box admin-login-box" id="adminLoginForm"><div class="modal-art" aria-hidden="true">⚙</div><h2 id="adminLoginTitle">管理员登录</h2><p class="muted">验证后进入小锅管理台。</p><label>管理员账号<input id="adminUsername" autocomplete="username" required></label><label>管理员密码<input id="adminPassword" type="password" autocomplete="current-password" required></label><p id="adminLoginError" class="admin-login-error" role="alert"></p><div class="modal-actions"><button type="button" class="pill" onclick="closeAdminLogin()">取消</button><button id="adminLoginSubmit" class="pill primary">进入管理台</button></div></form></div><div class="modal" id="userAuthModal" role="dialog" aria-modal="true" aria-labelledby="userAuthTitle"><form class="modal-box user-auth-box" id="userAuthForm"><div class="modal-art" aria-hidden="true">👤</div><h2 id="userAuthTitle">登录小锅</h2><p id="userAuthHint" class="muted">登录后可以收藏喜欢的菜谱。</p><div id="userAuthTabs" class="user-auth-tabs"><button type="button" class="active" data-mode="login" onclick="setUserAuthMode('login')">登录</button><button type="button" data-mode="register" onclick="setUserAuthMode('register')">注册</button></div><div id="userAuthFields"><label>账号<input id="userAuthUsername" autocomplete="username" maxlength="32" required></label><label>密码<input id="userAuthPassword" type="password" autocomplete="current-password" maxlength="72" required></label></div><div id="userAuthSignedIn" class="user-auth-status hidden"></div><p id="userAuthError" class="user-auth-error" role="alert"></p><div class="modal-actions"><button type="button" class="pill" onclick="closeUserAuthModal()">取消</button><button id="userAuthLogout" type="button" class="pill hidden" onclick="logoutUser()">退出登录</button><button id="userAuthSubmit" class="pill primary">登录</button></div></form></div>
+  </div><div class="toast" id="toast"></div><div class="modal" id="adminLoginModal" role="dialog" aria-modal="true" aria-labelledby="adminLoginTitle"><form class="modal-box admin-login-box" id="adminLoginForm"><div class="modal-art" aria-hidden="true">⚙</div><h2 id="adminLoginTitle">管理员登录</h2><p class="muted">验证后进入小锅管理台。</p><label>管理员账号<input id="adminUsername" autocomplete="username" required></label><label>管理员密码<input id="adminPassword" type="password" autocomplete="current-password" required></label><p id="adminLoginError" class="admin-login-error" role="alert"></p><div class="modal-actions"><button type="button" class="pill" onclick="closeAdminLogin()">取消</button><button id="adminLoginSubmit" class="pill primary">进入管理台</button></div></form></div><div class="modal" id="userAuthModal" role="dialog" aria-modal="true" aria-labelledby="userAuthTitle"><form class="modal-box user-auth-box" id="userAuthForm"><div class="modal-art" aria-hidden="true">👤</div><h2 id="userAuthTitle">登录小锅</h2><p id="userAuthHint" class="muted">登录后可以收藏喜欢的菜谱。</p><div id="loginRoleTabs" class="login-role-tabs"><button type="button" class="active" data-role="user" onclick="setLoginRole('user')">用户登录</button><button type="button" data-role="admin" onclick="setLoginRole('admin')">管理员登录</button></div><div id="userAuthTabs" class="user-auth-tabs"><button type="button" class="active" data-mode="login" onclick="setUserAuthMode('login')">登录</button><button type="button" data-mode="register" onclick="setUserAuthMode('register')">注册</button></div><div id="userAuthFields"><label>账号<input id="userAuthUsername" autocomplete="username" maxlength="32" required></label><label>密码<input id="userAuthPassword" type="password" autocomplete="current-password" maxlength="72" required></label></div><div id="accountPanel" class="account-panel hidden"><section class="account-row"><div><b>登录</b><span id="accountStatusText">已登录</span></div><button type="button" class="pill" onclick="showCookingHistory();closeUserAuthModal()">查看记录</button></section><section class="account-row account-reset"><div><b>重置密码</b><span>需要输入之前的密码</span></div><label>旧密码<input id="resetCurrentPassword" type="password" autocomplete="current-password" maxlength="72"></label><label>新密码<input id="resetNewPassword" type="password" autocomplete="new-password" maxlength="72"></label><label>确认新密码<input id="resetConfirmPassword" type="password" autocomplete="new-password" maxlength="72"></label><button id="resetPasswordButton" type="button" class="pill primary" onclick="resetUserPassword()">保存新密码</button></section><section class="account-row"><div><b>夜间 / 日间</b><span id="accountThemeText">跟随当前主题</span></div><button id="accountThemeButton" type="button" class="pill" onclick="toggleTheme()">切换</button></section></div><div id="userAuthSignedIn" class="user-auth-status hidden"></div><p id="userAuthError" class="user-auth-error" role="alert"></p><div class="modal-actions"><button type="button" class="pill" onclick="closeUserAuthModal()">取消</button><button id="userAuthLogout" type="button" class="pill danger hidden" onclick="logoutUser()">退出登录</button><button id="userAuthSubmit" class="pill primary">登录</button></div></form></div>
   <script src="config.js"></script>
   <script>
     let foods=[
@@ -105,9 +109,9 @@
       {id:'tomato-greens-egg',name:'番茄青菜滑蛋',art:'🍅🥬🍳',desc:'番茄、青菜和鸡蛋一起下锅，清爽又软乎。',time:'12 分钟',diff:'新手',cal:'250 kcal',ingredients:['鸡蛋','番茄','青菜'],tags:['快手','清爽'],steps:['番茄切块，青菜洗净，鸡蛋打散。','先让番茄在锅里变软，加入青菜。','淋入蛋液，轻轻推到凝固就完成。']}
     ];
     const isLocalHost=['localhost','127.0.0.1'].includes(window.location.hostname)||window.location.protocol==='file:';const fallbackApiOrigin=isLocalHost?'http://localhost:3008':'https://cute-food-cooking-helper-production.up.railway.app';const API_ORIGIN=(window.CUTE_FOOD_CONFIG?.API_ORIGIN||fallbackApiOrigin).replace(/\/+$/,'');const API_BASE=`${API_ORIGIN}/api`;
-    let userSession={authenticated:false,username:''};let userAuthMode='login';
+    let userSession={authenticated:false,username:''};let userAuthMode='login';let loginRole='user';
     function currentTheme(){return document.documentElement.dataset.theme==='dark'?'dark':'light'}
-    function renderThemeToggle(){const button=$('#themeToggle');if(!button)return;const dark=currentTheme()==='dark';button.textContent=dark?'☾':'☼';button.setAttribute('aria-label',dark?'切换浅色模式':'切换深色模式');button.title=dark?'切换浅色模式':'切换深色模式'}
+    function renderThemeToggle(){const button=$('#themeToggle');if(!button)return;const dark=currentTheme()==='dark';button.textContent=dark?'☾':'☼';button.setAttribute('aria-label',dark?'切换浅色模式':'切换深色模式');button.title=dark?'切换浅色模式':'切换深色模式';window.updateAccountThemeControls?.()}
     function setTheme(theme){document.documentElement.dataset.theme=theme;try{localStorage.setItem('cute-theme',theme)}catch{}renderThemeToggle()}
     function toggleTheme(){setTheme(currentTheme()==='dark'?'light':'dark')}
     async function userApi(path,options={}){const headers={...(options.headers||{})};if(options.body&&!headers['Content-Type'])headers['Content-Type']='application/json';const response=await fetch(`${API_BASE}${path}`,{credentials:'include',...options,headers});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||'小锅暂时连不上账号服务，请稍后再试');return result}
@@ -136,8 +140,8 @@
     let resultRecipes=[];let randomRecipe=null;let randomSpinning=false;let wheelRotation=0;let randomSpinToken=0;let catalogueReady=false;
     const cardGame={status:'idle',dealt:[],selected:[],revealed:[],chosen:null,recentDeal:-1,revealing:-1,session:0};
     const $=s=>document.querySelector(s);const $$=s=>[...document.querySelectorAll(s)];
-    function go(view){if($('#random').classList.contains('active')&&view!=='random')resetRandomExperience();$$('.view').forEach(v=>v.classList.toggle('active',v.id===view));$$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===view));window.scrollTo({top:0,behavior:'smooth'});if(view==='ingredients')renderIngredients();if(view==='recipes')renderRecipes();if(view==='favorites')renderFavorites()}
-    $$('#nav .nav-btn').forEach(b=>b.onclick=()=>go(b.dataset.view));
+    function go(view){if($('#random').classList.contains('active')&&view!=='random')resetRandomExperience();$$('.view').forEach(v=>v.classList.toggle('active',v.id===view));$$('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===view||(b.dataset.view==='my'&&['history','favorites'].includes(view))));window.scrollTo({top:0,behavior:'smooth'});if(view==='ingredients')renderIngredients();if(view==='recipes')renderRecipes();if(view==='favorites')renderFavorites()}
+    $$('#nav .nav-btn').forEach(b=>b.onclick=()=>b.dataset.view==='my'?showMyKitchen():go(b.dataset.view));
     function toast(message){const t=$('#toast');t.textContent=message;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2500)}
     function recipeArtIcons(r){const icons=(r.ingredients||[]).map(item=>typeof item==='string'?foods.find(food=>food.name===item)?.icon:item?.icon).filter(Boolean);return icons.length?icons:Array.from(r.art||'🍲')}
     function recipeArt(r){return recipeArtIcons(r).join('')}
@@ -642,6 +646,7 @@
   <script>
     (function(){
       window.adminSession=window.adminSession||{authenticated:false,username:''};
+      let authRolePinned=false;
 
       async function refreshAdminSession(){
         try{
@@ -671,6 +676,76 @@
         return userSession;
       }
 
+      function authBox(){
+        return $('#userAuthForm');
+      }
+
+      function resetPasswordFields(){
+        ['#resetCurrentPassword','#resetNewPassword','#resetConfirmPassword'].forEach(selector=>{
+          const input=$(selector);
+          if(input)input.value='';
+        });
+      }
+
+      window.updateAccountThemeControls=function(){
+        const dark=currentTheme()==='dark';
+        const text=$('#accountThemeText');
+        const button=$('#accountThemeButton');
+        if(text)text.textContent=dark?'当前是夜间模式':'当前是日间模式';
+        if(button)button.textContent=dark?'切到日间模式':'切到夜间模式';
+      };
+
+      function showSignedInAccountPanel(){
+        authBox()?.classList.add('is-account');
+        $('#loginRoleTabs')?.classList.add('hidden');
+        $('#userAuthTabs')?.classList.add('hidden');
+        $('#userAuthFields')?.classList.add('hidden');
+        $('#userAuthSignedIn')?.classList.add('hidden');
+        $('#accountPanel')?.classList.remove('hidden');
+        $('#userAuthSubmit')?.classList.add('hidden');
+        $('#userAuthLogout')?.classList.remove('hidden');
+        $('#userAuthTitle').textContent='账号管理';
+        $('#userAuthHint').textContent='管理登录、密码和显示模式。';
+        $('#accountStatusText').textContent=`已登录：${userSession.username}`;
+        resetPasswordFields();
+        updateAccountThemeControls();
+      }
+
+      function showLoginForm(){
+        authBox()?.classList.remove('is-account');
+        $('#loginRoleTabs')?.classList.remove('hidden');
+        $('#accountPanel')?.classList.add('hidden');
+        $('#userAuthSignedIn')?.classList.add('hidden');
+        $('#userAuthFields')?.classList.remove('hidden');
+        $('#userAuthSubmit')?.classList.remove('hidden');
+        $('#userAuthLogout')?.classList.add('hidden');
+        setLoginRole(loginRole||'user');
+        $('#userAuthForm').reset();
+      }
+
+      window.setLoginRole=function(role){
+        loginRole=role==='admin'?'admin':'user';
+        $$('#loginRoleTabs button').forEach(button=>button.classList.toggle('active',button.dataset.role===loginRole));
+        $('#userAuthTabs')?.classList.toggle('hidden',loginRole==='admin');
+        if(loginRole==='admin'){
+          userAuthMode='login';
+          $('#userAuthTitle').textContent='登录小锅';
+          $('#userAuthHint').textContent='选择管理员身份后，验证通过会进入管理台。';
+          $('#userAuthSubmit').textContent='进入管理台';
+          $('#userAuthPassword').autocomplete='current-password';
+          $$('#userAuthTabs button').forEach(button=>button.classList.toggle('active',button.dataset.mode==='login'));
+        }else{
+          setUserAuthMode(userAuthMode);
+        }
+        $('#userAuthError').textContent='';
+      };
+
+      const baseSetUserAuthMode=window.setUserAuthMode;
+      window.setUserAuthMode=function(mode){
+        if(loginRole==='admin')mode='login';
+        baseSetUserAuthMode?.(mode);
+      };
+
       window.renderUserAccount=function(){
         const button=$('#userAccountButton');
         if(!button)return;
@@ -680,9 +755,9 @@
         button.textContent=adminSignedIn?`管理员 ${username||'admin'}`:(userSignedIn?username.slice(0,6):'👤');
         button.classList.toggle('is-signed-in',adminSignedIn||userSignedIn);
         button.classList.toggle('is-admin',adminSignedIn);
-        button.onclick=adminSignedIn?openAdminLogin:(userSignedIn?showCookingHistory:openUserAuthModal);
+        button.onclick=adminSignedIn?openAdminLogin:()=>{loginRole='user';openUserAuthModal()};
         button.setAttribute('aria-label',adminSignedIn?`管理员 ${username}，进入管理台`:(userSignedIn?`${username}，查看烹饪记录`:'用户登录'));
-        button.title=adminSignedIn?`管理员 ${username}，进入管理台`:(userSignedIn?`${username}，查看烹饪记录`:'登录或注册');
+        button.title=adminSignedIn?`管理员 ${username}，进入管理台`:(userSignedIn?`${username}，账号管理`:'登录或注册');
       };
 
       window.openAdminLogin=async function(){
@@ -692,16 +767,15 @@
           window.location.href=`${API_ORIGIN}/admin`;
           return;
         }
-        closeUserAuthModal();
-        const modal=$('#adminLoginModal');
-        $('#adminLoginError').textContent='';
-        $('#adminLoginForm').reset();
-        modal.classList.add('show');
-        setTimeout(()=>$('#adminUsername').focus(),0);
+        loginRole='admin';
+        authRolePinned=true;
+        await openUserAuthModal();
+        authRolePinned=false;
       };
 
       window.openUserAuthModal=async function(){
         document.activeElement?.blur?.();
+        if(!authRolePinned&&loginRole==='admin')loginRole='user';
         const admin=await refreshAdminSession();
         if(admin.authenticated){
           renderUserAccount();
@@ -713,22 +787,20 @@
         const modal=$('#userAuthModal');
         $('#userAuthError').textContent='';
         if(userSession.authenticated){
-          $('#userAuthTabs').classList.add('hidden');
-          $('#userAuthFields').classList.add('hidden');
-          $('#userAuthSignedIn').classList.remove('hidden');
-          $('#userAuthSignedIn').textContent=`你正在以 ${userSession.username} 的身份登录。`;
-          $('#userAuthSubmit').classList.add('hidden');
-          $('#userAuthLogout').classList.remove('hidden');
+          showSignedInAccountPanel();
         }else{
-          $('#userAuthTabs').classList.remove('hidden');
-          $('#userAuthFields').classList.remove('hidden');
-          $('#userAuthSignedIn').classList.add('hidden');
-          $('#userAuthSubmit').classList.remove('hidden');
-          $('#userAuthLogout').classList.add('hidden');
-          setUserAuthMode(userAuthMode);
-          $('#userAuthForm').reset();
+          showLoginForm();
         }
         modal.classList.add('show');
+      };
+
+      window.showMyKitchen=function(){
+        if(userSession.authenticated){
+          showCookingHistory();
+          return;
+        }
+        loginRole='user';
+        openUserAuthModal();
       };
 
       window.hydrateUserAuth=async function(){
@@ -747,7 +819,21 @@
         button.disabled=true;
         error.textContent='';
         try{
-          const result=await userApi(`/user-auth/${userAuthMode==='login'?'login':'register'}`,{method:'POST',body:JSON.stringify({username:$('#userAuthUsername').value.trim(),password:$('#userAuthPassword').value})});
+          const username=$('#userAuthUsername').value.trim();
+          const password=$('#userAuthPassword').value;
+          if(loginRole==='admin'){
+            const response=await fetch(`${API_BASE}/auth/login`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
+            const result=await response.json().catch(()=>({}));
+            if(!response.ok)throw new Error(result.error||'登录失败，请稍后再试');
+            window.adminSession={authenticated:true,username:result.username||username};
+            userSession={authenticated:false,username:''};
+            favorites=[];
+            renderUserAccount();
+            closeUserAuthModal();
+            window.location.href=`${API_ORIGIN}/admin`;
+            return;
+          }
+          const result=await userApi(`/user-auth/${userAuthMode==='login'?'login':'register'}`,{method:'POST',body:JSON.stringify({username,password})});
           window.adminSession={authenticated:false,username:''};
           userSession={authenticated:Boolean(result.authenticated),username:result.username||''};
           await loadUserFavorites();
@@ -758,6 +844,33 @@
           toast(`欢迎回来，${userSession.username}！收藏夹已经为你准备好啦。`);
         }catch(authError){
           error.textContent=authError.message;
+        }finally{
+          button.disabled=false;
+        }
+      };
+
+      window.resetUserPassword=async function(){
+        const button=$('#resetPasswordButton');
+        const error=$('#userAuthError');
+        const current=$('#resetCurrentPassword').value;
+        const next=$('#resetNewPassword').value;
+        const confirm=$('#resetConfirmPassword').value;
+        error.textContent='';
+        if(!current||!next||!confirm){
+          error.textContent='请把旧密码和新密码都填写完整。';
+          return;
+        }
+        if(next!==confirm){
+          error.textContent='两次输入的新密码不一致。';
+          return;
+        }
+        button.disabled=true;
+        try{
+          await userApi('/user-auth/password',{method:'POST',body:JSON.stringify({current_password:current,new_password:next})});
+          resetPasswordFields();
+          toast('密码已经更新，下次登录请使用新密码。');
+        }catch(passwordError){
+          error.textContent=passwordError.message;
         }finally{
           button.disabled=false;
         }
